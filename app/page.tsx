@@ -1,62 +1,57 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Product, CartItem, CheckoutFormData } from "./types";
+import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import ProductCard from "./components/ProductCard";
 import CartDrawer from "./components/CartDrawer";
 import CheckoutModal from "./components/CheckoutModal";
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Cloud Soft Tee",
-    price: 1490,
-    desc: "Soft everyday tee designed for comfortable play (1-5 Years).",
-    category: "boy",
-  },
-  {
-    id: 2,
-    name: "Little Twirl Dress",
-    price: 2290,
-    desc: "A playful dress made for twirling and little adventures (1-5 Years).",
-    category: "girl",
-  },
-  {
-    id: 3,
-    name: "Cozy Play Set",
-    price: 2090,
-    desc: "A comfy matching set for everyday wear (Unisex).",
-    category: "unisex",
-  },
-  {
-    id: 4,
-    name: "Meadow Hoodie",
-    price: 2490,
-    desc: "A cozy layer for cooler days (1-5 Years).",
-    category: "boy",
-  },
-  {
-    id: 5,
-    name: "Meadow Joggers",
-    price: 1790,
-    desc: "Easy-fit joggers for active little kids (Unisex).",
-    category: "unisex",
-  },
-  {
-    id: 6,
-    name: "Sunny Play Set",
-    price: 2190,
-    desc: "A cheerful two-piece set for everyday play (Girl).",
-    category: "girl",
-  },
-];
+interface SupabaseProductRow {
+  id: number | string;
+  title?: string;
+  name?: string;
+  price: number;
+  desc?: string;
+  category?: string;
+  image?: string;
+  stock?: number;
+}
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) {
+        console.error("Error fetching products:", error);
+      } else if (data) {
+        // Proper typing use ki hai bina 'any' ke
+        const rows: SupabaseProductRow[] = data;
+        const formattedProducts: Product[] = rows.map((item) => ({
+          id: Number(item.id),
+          name: item.title || item.name || "Untitled Product",
+          price: item.price,
+          desc:
+            item.desc ||
+            `Category: ${item.category || "General"} | Stock: ${
+              item.stock ?? "Available"
+            }`,
+          category: item.category || "unisex",
+          image: item.image || "",
+        }));
+        setProducts(formattedProducts);
+      }
+    }
+
+    fetchProducts();
+  }, []);
 
   const money = (n: number): string => "PKR " + n.toLocaleString("en-PK");
 
@@ -166,16 +161,22 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-              formatMoney={money}
-            />
-          ))}
-        </div>
+        {products.length === 0 ? (
+          <p className="text-center text-stone-400 py-12">
+            Loading products from Supabase...
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={addToCart}
+                formatMoney={money}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <footer className="py-12 text-center bg-[#faf8f5] border-t border-stone-200 text-stone-500 text-xs">
