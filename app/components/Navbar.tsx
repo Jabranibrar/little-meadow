@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 
 interface NavbarProps {
@@ -9,10 +10,16 @@ interface NavbarProps {
 
 export default function Navbar({ totalCount, onOpenCart }: NavbarProps) {
   return (
-    <header className="h-20 flex items-center justify-between px-[6%] bg-white/90 sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
+    <header className="h-20 flex items-center justify-between px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
       <a href="#top" className="flex items-center gap-2 group">
-        <div className="w-9 h-9 bg-stone-900 text-white rounded-lg flex items-center justify-center font-bold text-sm tracking-tighter">
-          LM
+        <div className="relative w-10 h-10 overflow-hidden flex items-center justify-center rounded-full">
+          <Image
+            src="/little-meadow.jpeg"
+            alt="Little Meadow Logo"
+            fill
+            priority
+            className="object-contain"
+          />
         </div>
         <div className="flex flex-col">
           <span className="font-bold text-base tracking-tight text-stone-900 leading-none">

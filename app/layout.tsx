@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Nunito } from "next/font/google";
 import "./globals.css";
 
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+});
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+});
+
 export const metadata: Metadata = {
-  title: "Little Meadow | Premium Kidswear (1-5 Years)",
-  description:
-    "Shop comfortable, high-quality everyday clothing and playsets for kids aged 1 to 5 years. Order easily via WhatsApp.",
-  keywords:
-    "kidswear, baby clothes Pakistan, children clothing online, little meadow, kids tshirts joggers",
+  title: "Little Meadow",
+  description: "Thoughtful kidswear for daily adventures.",
 };
 
 export default function RootLayout({
@@ -15,8 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${cormorant.variable} ${nunito.variable}`}>
+      <body>
+        <div
+          aria-hidden
+          className="fixed inset-0 -z-10 bg-cover bg-center"
+          style={{ backgroundImage: "url('/little-meadow.jpeg')" }}
+        />
+        <div aria-hidden className="fixed inset-0 -z-10 bg-[#faf8f5]/70" />
+        {children}
+      </body>
     </html>
   );
 }

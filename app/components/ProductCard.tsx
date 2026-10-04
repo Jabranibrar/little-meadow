@@ -21,7 +21,6 @@ export default function ProductCard({
   return (
     <div className="border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
       <div>
-        {/* Placeholder ki jagah ab yahan product ki image show hogi */}
         <div className="h-64 bg-stone-100 overflow-hidden border-b border-stone-100">
           {product.image ? (
             <img

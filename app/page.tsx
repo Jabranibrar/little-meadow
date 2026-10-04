@@ -133,24 +133,24 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
+    <div className="min-h-screen text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
       <Navbar totalCount={totalCount} onOpenCart={() => setIsCartOpen(true)} />
 
       <Hero />
 
       <section
         id="story"
-        className="relative py-7 md:py-14 px-6 md:px-12 border-b border-stone-200 text-stone-800 overflow-hidden bg-stone-900"
+        className="relative py-7 md:py-14 px-6 md:px-12 border-b border-stone-200 text-stone-800 overflow-hidden "
       >
         <div className="absolute inset-0 z-0">
-          <Image
+          {/* <Image
             src="/little-meadow.jpeg"
             alt="Little Meadow Background"
             fill
             priority
             className="object-cover scale-105 transform"
-          />
-          <div className="absolute inset-0 bg-[#faf8f5]/90"></div>
+          /> */}
+          <div className="absolute inset-0 bg-pink-200/50"></div>
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
@@ -251,7 +251,7 @@ export default function Home() {
 
         {products.length === 0 ? (
           <p className="text-center text-stone-400 py-12">
-            Loading products from Supabase...
+            Loading products...
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -267,7 +267,7 @@ export default function Home() {
         )}
       </section>
 
-      <footer className="py-6 sm:py-9 md:py-12 text-center bg-[#faf8f5] border-t border-stone-200 text-stone-500 text-xs">
+      <footer className="py-6 sm:py-9 md:py-12 text-center bg-[#faf8f5]/50 border-t border-stone-200 text-stone-500 text-xs">
         <div className="font-bold text-stone-900 mb-1 text-sm">
           Little Meadow
         </div>
