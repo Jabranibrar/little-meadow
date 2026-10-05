@@ -19,6 +19,7 @@ interface SupabaseProductRow {
   category?: string;
   image?: string;
   stock?: number;
+  gender?: string;
 }
 
 export default function Home() {
@@ -26,6 +27,11 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [category, setCategory] = useState<"all" | "boy" | "girl">("all");
+  const visibleProducts =
+    category === "all"
+      ? products
+      : products.filter((p) => p.category === category);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -44,8 +50,10 @@ export default function Home() {
             `Category: ${item.category || "General"} | Stock: ${
               item.stock ?? "Available"
             }`,
-          category: (["boy", "girl", "unisex"].includes(item.category ?? "")
-            ? item.category
+          category: (["boy", "girl", "unisex"].includes(
+            (item.gender ?? "").toLowerCase().trim()
+          )
+            ? (item.gender ?? "").toLowerCase().trim()
             : "unisex") as Product["category"],
           image: item.image || "",
         }));
@@ -134,7 +142,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
-      <Navbar totalCount={totalCount} onOpenCart={() => setIsCartOpen(true)} />
+      <Navbar
+        totalCount={totalCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        onSelectCategory={setCategory}
+      />
 
       <Hero />
 
@@ -255,7 +267,7 @@ export default function Home() {
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {visibleProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
