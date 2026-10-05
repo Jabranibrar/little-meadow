@@ -10,9 +10,6 @@ export default function Hero() {
       <div className="absolute w-51.25 h-51.25 bg-[#f0c4b9] rounded-full right-[2%] top-90 z-0 opacity-60"></div>
 
       <div className="relative z-10 max-w-190 mx-auto text-center">
-        <div className="text-lg text-[#68625d] font-semibold mb-4">
-          A small kidswear label (Ages 1–5 Years)
-        </div>
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none mb-6 md:mb-8">
           Little clothes
           <br />

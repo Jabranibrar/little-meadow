@@ -49,8 +49,23 @@ export default function CartDrawer({
           </div>
 
           {cart.length === 0 ? (
-            <div className="text-center py-24 text-stone-400 text-xs uppercase tracking-wider font-medium">
-              Your bag is empty
+            <div className="flex flex-col items-center text-center py-24">
+              <p className="text-stone-400 text-xs uppercase tracking-wider font-medium mb-6">
+                Your bag is empty
+              </p>
+              <button
+                onClick={() => {
+                  onClose();
+                  setTimeout(() => {
+                    document
+                      .getElementById("shop")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }, 100);
+                }}
+                className="bg-stone-900 text-white px-8 py-3 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-stone-800 transition-colors cursor-pointer"
+              >
+                Continue Shopping
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
