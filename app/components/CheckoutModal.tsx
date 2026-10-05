@@ -127,24 +127,20 @@ export default function CheckoutModal({
             <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
               Payment Method
             </label>
-            <select
-              value={formData.payment}
-              onChange={(e) =>
-                setFormData({ ...formData, payment: e.target.value })
-              }
-              className="w-full p-3 rounded-lg border border-stone-200 bg-white text-sm outline-none focus:border-stone-900 font-medium"
-            >
-              <option>Cash on Delivery</option>
-              <option>Direct Bank Transfer</option>
-            </select>
+            <div className="w-full p-3 rounded-lg border border-stone-200 bg-stone-50 text-sm font-medium text-stone-700">
+              Cash on Delivery
+            </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 text-white py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-emerald-700 transition-colors cursor-pointer mt-2"
+            className="w-full bg-stone-900 text-white py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-stone-800 transition-colors cursor-pointer mt-2"
           >
-            Confirm Order via WhatsApp 💬
+            Place Order
           </button>
+          <p className="text-[11px] text-stone-400 text-center mt-3">
+            Your order will be confirmed with us on WhatsApp.
+          </p>
         </form>
       </div>
     </div>

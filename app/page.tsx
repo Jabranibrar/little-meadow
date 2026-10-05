@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { Product, CartItem, CheckoutFormData } from "./types";
 import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
@@ -39,7 +38,6 @@ export default function Home() {
       if (error) {
         console.error("Error fetching products:", error);
       } else if (data) {
-        // Proper typing use ki hai bina 'any' ke
         const rows: SupabaseProductRow[] = data;
         const formattedProducts: Product[] = rows.map((item) => ({
           id: Number(item.id),
@@ -155,13 +153,6 @@ export default function Home() {
         className="relative py-7 md:py-14 px-6 md:px-12 border-b border-stone-200 text-stone-800 overflow-hidden "
       >
         <div className="absolute inset-0 z-0">
-          {/* <Image
-            src="/little-meadow.jpeg"
-            alt="Little Meadow Background"
-            fill
-            priority
-            className="object-cover scale-105 transform"
-          /> */}
           <div className="absolute inset-0 bg-pink-200/50"></div>
         </div>
 

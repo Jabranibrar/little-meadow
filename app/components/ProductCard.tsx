@@ -54,7 +54,6 @@ export default function ProductCard({
             {product.desc}
           </p>
 
-          {/* Size Selection Grid */}
           <div className="mb-4">
             <div className="text-[10px] uppercase font-bold text-stone-500 mb-1.5 tracking-wider">
               Select Size:
