@@ -45,11 +45,33 @@ export async function POST(req: Request) {
     ? digits
     : "92" + digits.replace(/^0/, "");
 
-  const confirmMsg = `Assalam o Alaikum ${
-    form.name
-  }! Aap ka Little Meadow ka order (${orderId}) confirm ho gaya hai. Total: PKR ${Number(
-    total
-  ).toLocaleString("en-PK")}. Jald delivery ho gi. Shukriya!`;
+  const itemLines = (items as Item[])
+    .map((i) => `- ${i.name} (Size: ${i.size}) x ${i.qty}`)
+    .join("\n");
+
+  const confirmMsg = `*Little Meadow - Order Confirmation*
+  
+  Hello ${form.name},
+  Thank you for placing your order with *Little Meadow*.
+  
+  *Order Summary*
+  *Order #:* ${orderId}
+  *Items:*
+  ${itemLines}
+  *Total:* Rs. ${Number(total).toLocaleString("en-PK")}
+  *Delivery Address:* ${form.address}, ${form.city}
+  
+  Please review your order details carefully.
+  
+  To confirm your order, simply reply *CONFIRM*.
+  
+  Once we receive your confirmation, we will start preparing your parcel for dispatch.
+  
+  If you would like to make any changes, please let us know before confirming your order.
+  
+  Thank you for being a part of the Little Meadow family.
+  
+  *Team Little Meadow*`;
   const waLink = `https://wa.me/${intl}?text=${encodeURIComponent(confirmMsg)}`;
 
   const rows = (items as Item[])
