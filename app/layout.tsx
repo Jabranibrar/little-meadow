@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     images: ["/little-meadow.jpeg"],
     type: "website",
   },
+  verification: {
+    google: "fQfVd78JwXIjIk6FErDL83WdOxIGNtVqKr4ULelV2I4",
+  },
 };
 
 export default function RootLayout({
