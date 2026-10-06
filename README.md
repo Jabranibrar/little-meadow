@@ -1,36 +1,158 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Little Meadow
+
+**Little Meadow by Ayra & Hadin** is a kidswear storefront for ages 1 to 5 years. Products are managed in Supabase, customers browse by Boy / Girl, build a bag, and place orders that are sent to the store owner on WhatsApp.
+
+**Live site:** https://little-meadow-pk.vercel.app
+
+---
+
+## Features
+
+- Product catalogue loaded from Supabase
+- Boy / Girl / Collection filtering (desktop nav and mobile hamburger menu)
+- Size selection per product (1-2Y to 4-5Y)
+- Shopping bag drawer with quantity controls and product thumbnails
+- Checkout form with Cash on Delivery
+- Order summary sent to the store via WhatsApp, with an on-site thank-you message
+- Our Story section and Exchange & Return Policy page
+- Fully responsive layout with a fixed background image
+- Optimized images with `next/image`
+- SEO ready: metadata, Open Graph, `sitemap.xml`, `robots.txt`
+
+## Tech Stack
+
+| Area      | Technology                               |
+| --------- | ---------------------------------------- |
+| Framework | Next.js (App Router)                     |
+| Language  | TypeScript                               |
+| UI        | React, Tailwind CSS v4                   |
+| Fonts     | Cormorant Garamond, Nunito (`next/font`) |
+| Database  | Supabase (PostgreSQL)                    |
+| Hosting   | Vercel                                   |
+
+## Project Structure
+
+```
+app/
+├── components/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── ProductCard.tsx
+│   ├── CartDrawer.tsx
+│   ├── CheckoutModal.tsx
+│   └── Footer.tsx
+├── exchange-policy/
+│   └── page.tsx
+├── lib/
+│   └── supabase.ts
+├── globals.css
+├── icon.png
+├── layout.tsx
+├── page.tsx
+├── robots.ts
+├── sitemap.ts
+└── types.ts
+public/
+└── little-meadow.jpeg
+```
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and install
+
+```bash
+git clone https://github.com/Jabranibrar/little-meadow.git
+cd little-meadow
+npm install
+```
+
+### 2. Environment variables
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-publishable-key>
+```
+
+Both values are in the Supabase dashboard under **Project Settings → API**. Never commit this file.
+
+### 3. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Production build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Supabase Setup
 
-To learn more about Next.js, take a look at the following resources:
+Create a `products` table:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Column       | Type        | Notes                                 |
+| ------------ | ----------- | ------------------------------------- |
+| `id`         | int8        | Primary key                           |
+| `created_at` | timestamptz | Default `now()`                       |
+| `title`      | text        | Product name                          |
+| `price`      | numeric     | In PKR                                |
+| `image`      | text        | Public image URL                      |
+| `category`   | text        | e.g. `Clothing`                       |
+| `gender`     | text        | `boy`, `girl` or `unisex` (lowercase) |
+| `stock`      | int4        | Available quantity                    |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Enable **Row Level Security** and add a `SELECT` policy for the `anon` role so the storefront can read products.
 
-## Deploy on Vercel
+```sql
+alter table products enable row level security;
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+create policy "Public can read products"
+on products for select
+to anon
+using (true);
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Product Images
+
+Remote image hosts must be allowed in `next.config.ts`. Currently allowed:
+
+- Supabase Storage (`<project-id>.supabase.co`)
+- Adobe Stock CDN (`**.ftcdn.net`)
+
+When using a new image host, add it to `images.remotePatterns` and restart the dev server. Uploading images to Supabase Storage is recommended.
+
+## Deployment
+
+The project is deployed on Vercel. Every push to the main branch triggers a new deployment.
+
+1. Import the repository in Vercel.
+2. Add the two environment variables from `.env.local` in **Project Settings → Environment Variables**.
+3. Deploy.
+
+If the site URL changes, update it in `app/layout.tsx` (`metadataBase`), `app/sitemap.ts` and `app/robots.ts`.
+
+## SEO
+
+- Metadata and Open Graph tags in `app/layout.tsx`
+- Sitemap at `/sitemap.xml`
+- Robots rules at `/robots.txt`
+- Submit the sitemap in Google Search Console after deployment
+
+## Roadmap
+
+- [ ] Save orders to a Supabase `orders` table
+- [ ] Email confirmation for customer and store owner
+- [ ] Custom `.pk` domain
+- [ ] Additional payment methods (bank transfer)
+
+## License
+
+All rights reserved. © 2026 Little Meadow by Ayra & Hadin.
+
+_Made with love for little moments._
