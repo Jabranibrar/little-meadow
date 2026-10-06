@@ -27,10 +27,8 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
-  const [orderSuccess, setOrderSuccess] = useState<{
-    id: string;
-    url: string;
-  } | null>(null);
+  const [orderSuccess, setOrderSuccess] = useState<{ id: string } | null>(null);
+  const [isPlacing, setIsPlacing] = useState<boolean>(false);
   const [category, setCategory] = useState<"all" | "boy" | "girl">("all");
   const visibleProducts =
     category === "all"
@@ -121,36 +119,39 @@ export default function Home() {
   );
   const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
-  const handleCheckoutSubmit = (formData: CheckoutFormData) => {
+  const handleCheckoutSubmit = async (formData: CheckoutFormData) => {
+    if (isPlacing) return;
+    setIsPlacing(true);
+
     const orderId = "LM-" + Date.now().toString().slice(-7);
 
-    let msg = `🛍 *NEW ORDER RECEIVED - LITTLE MEADOW* \n\n`;
-    msg += `🆔 *Order ID:* ${orderId}\n`;
-    msg += `👤 *Name:* ${formData.name}\n`;
-    msg += `📞 *Phone:* ${formData.phone}\n`;
-    msg += `📧 *Email:* ${formData.email}\n`;
-    msg += `🏙 *City:* ${formData.city}\n`;
-    msg += `📍 *Address:* ${formData.address}\n`;
-    msg += `💰 *Payment:* ${formData.payment}\n\n`;
-    msg += `📦 *Items Ordered:*\n`;
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          form: formData,
+          items: cart.map((i) => ({
+            name: i.name,
+            size: i.size,
+            qty: i.qty,
+            price: i.price,
+          })),
+          total: totalAmount,
+        }),
+      });
 
-    cart.forEach((item, index) => {
-      msg += `${index + 1}. ${item.name} (Size: ${item.size}) x ${
-        item.qty
-      } = ${money(item.price * item.qty)}\n`;
-    });
+      if (!res.ok) throw new Error("Order failed");
 
-    msg += `\n*Total Amount:* ${money(totalAmount)}`;
-
-    const whatsappNumber = "923046133091";
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-      msg
-    )}`;
-
-    window.open(url, "_blank");
-    setCart([]);
-    setIsCheckoutOpen(false);
-    setOrderSuccess({ id: orderId, url });
+      setCart([]);
+      setIsCheckoutOpen(false);
+      setOrderSuccess({ id: orderId });
+    } catch {
+      alert("Order place nahi ho saka, dobara try karein.");
+    } finally {
+      setIsPlacing(false);
+    }
   };
 
   return (
@@ -316,17 +317,9 @@ export default function Home() {
               Order ID: <strong>{orderSuccess.id}</strong>
             </p>
             <p className="text-xs text-stone-500 mb-6 leading-relaxed">
-              Please press <strong>Send</strong> in WhatsApp to confirm your
-              order. We will get back to you shortly.
+              Your order has been placed successfully. We will contact you
+              shortly on WhatsApp to confirm it.
             </p>
-            <a
-              href={orderSuccess.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full bg-stone-900 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors mb-3"
-            >
-              Open WhatsApp Again
-            </a>
             <button
               onClick={() => setOrderSuccess(null)}
               className="w-full border border-stone-300 text-stone-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-50 transition-colors cursor-pointer"
