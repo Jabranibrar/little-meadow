@@ -64,6 +64,14 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const locked = isCartOpen || isCheckoutOpen;
+    document.body.style.overflow = locked ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isCartOpen, isCheckoutOpen]);
+
   const money = (n: number): string => "PKR " + n.toLocaleString("en-PK");
 
   const addToCart = (product: Product, size: string, qty: number) => {

@@ -15,8 +15,21 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Little Meadow",
-  description: "Thoughtful kidswear for daily adventures.",
+  metadataBase: new URL("https://little-meadow-pk.vercel.app"),
+  title: {
+    default: "Little Meadow | Kidswear 1-5 Years",
+    template: "%s | Little Meadow",
+  },
+  description:
+    "Little Meadow by Ayra & Hadin. Thoughtful, premium kidswear for ages 1 to 5, made for little moments.",
+  openGraph: {
+    title: "Little Meadow | Kidswear 1-5 Years",
+    description: "Thoughtful kidswear for daily adventures.",
+    url: "/",
+    siteName: "Little Meadow",
+    images: ["/little-meadow.jpeg"],
+    type: "website",
+  },
 };
 
 export default function RootLayout({
