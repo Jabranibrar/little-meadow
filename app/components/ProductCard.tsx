@@ -22,14 +22,14 @@ export default function ProductCard({
   return (
     <div className="border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
       <div>
-        <div className="relative h-64 bg-stone-100 overflow-hidden border-b border-stone-100">
+        <div className="relative aspect-4/4 bg-[#faf8f5] overflow-hidden border-b border-stone-100">
           {product.image ? (
             <Image
               src={product.image}
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover"
+              className="object-contain transition-transform duration-500 hover:scale-105"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs uppercase tracking-widest font-medium">
