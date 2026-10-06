@@ -42,7 +42,30 @@ export default function Footer() {
         </nav>
 
         <div className="w-12 h-px bg-stone-300 mx-auto my-6 sm:my-8" />
-
+        <div className="flex justify-center mb-6">
+          <Link
+            href="https://www.instagram.com/littlemeadow_a.h"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Little Meadow on Instagram"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-300 text-stone-600 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden
+            >
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+            </svg>
+          </Link>
+        </div>
         <div className="flex flex-col items-center gap-2 text-xs text-stone-500 text-center">
           <a
             href="mailto:hello@littlemeadow.pk"
