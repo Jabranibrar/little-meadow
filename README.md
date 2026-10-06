@@ -4,6 +4,8 @@
 
 **Live site:** https://little-meadow-pk.vercel.app
 
+**Repository:** https://github.com/Jabranibrar/little-meadow
+
 ---
 
 ## Features
@@ -13,7 +15,7 @@
 - Size selection per product (1-2Y to 4-5Y)
 - Shopping bag drawer with quantity controls and product thumbnails
 - Checkout form with Cash on Delivery
-- Order summary sent to the store via WhatsApp, with an on-site thank-you message
+- Order summary sent to the store via WhatsApp
 - Our Story section and Exchange & Return Policy page
 - Fully responsive layout with a fixed background image
 - Optimized images with `next/image`
@@ -68,14 +70,13 @@ npm install
 
 ### 2. Environment variables
 
-Create a `.env.local` file in the project root:
+Copy `.env.example` to `.env.local` and fill in your values:
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-publishable-key>
+```bash
+cp .env.example .env.local
 ```
 
-Both values are in the Supabase dashboard under **Project Settings → API**. Never commit this file.
+Both values are in the Supabase dashboard under **Project Settings → API**. Never commit `.env.local`.
 
 ### 3. Run locally
 
