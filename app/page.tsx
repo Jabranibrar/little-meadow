@@ -27,6 +27,10 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [orderSuccess, setOrderSuccess] = useState<{
+    id: string;
+    url: string;
+  } | null>(null);
   const [category, setCategory] = useState<"all" | "boy" | "girl">("all");
   const visibleProducts =
     category === "all"
@@ -65,12 +69,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const locked = isCartOpen || isCheckoutOpen;
+    const locked = isCartOpen || isCheckoutOpen || !!orderSuccess;
     document.body.style.overflow = locked ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isCartOpen, isCheckoutOpen]);
+  }, [isCartOpen, isCheckoutOpen, orderSuccess]);
 
   const money = (n: number): string => "PKR " + n.toLocaleString("en-PK");
 
@@ -146,6 +150,7 @@ export default function Home() {
     window.open(url, "_blank");
     setCart([]);
     setIsCheckoutOpen(false);
+    setOrderSuccess({ id: orderId, url });
   };
 
   return (
@@ -301,6 +306,36 @@ export default function Home() {
         onClose={() => setIsCheckoutOpen(false)}
         onSubmitOrder={handleCheckoutSubmit}
       />
+      {orderSuccess && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white max-w-sm w-full rounded-2xl p-6 sm:p-8 text-center shadow-2xl">
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-stone-900 mb-2">
+              Thank you for your order
+            </h2>
+            <p className="text-sm text-stone-600 mb-3">
+              Order ID: <strong>{orderSuccess.id}</strong>
+            </p>
+            <p className="text-xs text-stone-500 mb-6 leading-relaxed">
+              Please press <strong>Send</strong> in WhatsApp to confirm your
+              order. We will get back to you shortly.
+            </p>
+            <a
+              href={orderSuccess.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-stone-900 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors mb-3"
+            >
+              Open WhatsApp Again
+            </a>
+            <button
+              onClick={() => setOrderSuccess(null)}
+              className="w-full border border-stone-300 text-stone-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-50 transition-colors cursor-pointer"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
