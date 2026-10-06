@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CartItem } from "../types";
+import Image from "next/image";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -75,8 +76,20 @@ export default function CartDrawer({
                   className="flex items-center justify-between border-b border-stone-100 pb-4"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-stone-100 rounded-lg flex items-center justify-center text-stone-400 text-[10px] uppercase font-semibold">
-                      Img
+                    <div className="relative w-16 h-16 shrink-0 bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
+                      {item.image ? (
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          sizes="64px"
+                          className="object-contain"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-stone-400 text-[10px] uppercase font-semibold">
+                          Img
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h4 className="font-semibold text-stone-900 text-sm">

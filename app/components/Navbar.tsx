@@ -23,55 +23,80 @@ export default function Navbar({
     setMenuOpen(false);
   };
 
+  const linkClass =
+    "relative hover:text-stone-900 transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-stone-900 after:transition-all hover:after:w-full";
+
   return (
-    <header className="h-20 flex items-center justify-between px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
-      <a href="#top" className="flex items-center gap-2 group">
-        <div className="relative w-10 h-10 overflow-hidden flex items-center justify-center rounded-full">
+    <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
+      <a href="#top" className="flex items-center gap-2.5">
+        <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-full border border-stone-200">
           <Image
             src="/little-meadow.jpeg"
             alt="Little Meadow Logo"
             fill
             priority
-            className="object-contain"
+            className="object-cover"
           />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-base tracking-tight text-stone-900 leading-none">
+          <span className="font-serif italic text-xl md:text-2xl text-stone-900 leading-none">
             Little Meadow
           </span>
-          <span className="text-[10px] tracking-widest uppercase text-stone-500 font-medium mt-0.5">
+          <span className="hidden sm:block text-[10px] tracking-[0.25em] uppercase text-stone-500 font-medium mt-1">
             Kidswear 1-5Y
           </span>
         </div>
       </a>
 
-      <nav className="hidden md:flex gap-8 text-xs font-semibold uppercase tracking-wider text-stone-600">
-        <a href="#shop" className="hover:text-stone-900 transition-colors">
+      <nav className="hidden md:flex gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
+        <a href="#shop" onClick={() => pick("all")} className={linkClass}>
           Collection
         </a>
-        <a href="#story" className="hover:text-stone-900 transition-colors">
+        <a href="#shop" onClick={() => pick("boy")} className={linkClass}>
+          Boy
+        </a>
+        <a href="#shop" onClick={() => pick("girl")} className={linkClass}>
+          Girl
+        </a>
+        <a href="#story" className={linkClass}>
           Our Story
         </a>
       </nav>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5 md:gap-3">
         <button
           onClick={onOpenCart}
-          className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-stone-200 bg-stone-50 hover:bg-stone-100 transition-all cursor-pointer"
+          aria-label={`Open bag, ${totalCount} items`}
+          className="flex items-center gap-2 px-3.5 md:px-4 py-2 rounded-full border border-stone-300 bg-white/80 hover:bg-stone-900 hover:text-white hover:border-stone-900 text-stone-800 transition-all cursor-pointer"
         >
-          <span className="text-xs font-bold text-stone-800 uppercase tracking-wider">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4.5 w-4.5"
+            aria-hidden
+          >
+            <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z" />
+            <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+          </svg>
+          <span className="text-xs font-bold uppercase tracking-wider">
             Bag
           </span>
-          <span className="w-5 h-5 bg-stone-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
-            {totalCount}
-          </span>
+          {totalCount > 0 && (
+            <span className="min-w-5 h-5 px-1 bg-stone-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
+              {totalCount}
+            </span>
+          )}
         </button>
 
         <button
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
-          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-full border border-stone-200 bg-stone-50 cursor-pointer"
+          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-full border border-stone-300 bg-white/80 cursor-pointer"
         >
           <span
             className={`block w-4 h-0.5 bg-stone-900 transition-transform ${
@@ -92,32 +117,42 @@ export default function Navbar({
       </div>
 
       {menuOpen && (
-        <nav className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[6%] py-4 flex flex-col text-xs font-semibold uppercase tracking-wider text-stone-700">
-          <a
-            href="#shop"
-            onClick={() => pick("all")}
-            className="py-3 border-b border-stone-100"
-          >
-            Collection
-          </a>
-          <a
-            href="#shop"
-            onClick={() => pick("boy")}
-            className="py-3 pl-4 border-b border-stone-100 text-stone-500"
-          >
-            Boy
-          </a>
-          <a
-            href="#shop"
-            onClick={() => pick("girl")}
-            className="py-3 pl-4 border-b border-stone-100 text-stone-500"
-          >
-            Girl
-          </a>
-          <a href="#story" onClick={() => setMenuOpen(false)} className="py-3">
-            Our Story
-          </a>
-        </nav>
+        <>
+          <div
+            className="md:hidden fixed inset-0 top-16 bg-black/20 -z-10"
+            onClick={() => setMenuOpen(false)}
+          />
+          <nav className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[5%] py-3 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
+            <a
+              href="#shop"
+              onClick={() => pick("all")}
+              className="py-3.5 border-b border-stone-100"
+            >
+              Collection
+            </a>
+            <a
+              href="#shop"
+              onClick={() => pick("boy")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500"
+            >
+              Boy
+            </a>
+            <a
+              href="#shop"
+              onClick={() => pick("girl")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500"
+            >
+              Girl
+            </a>
+            <a
+              href="#story"
+              onClick={() => setMenuOpen(false)}
+              className="py-3.5"
+            >
+              Our Story
+            </a>
+          </nav>
+        </>
       )}
     </header>
   );

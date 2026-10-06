@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-[#faf8f5]/10 backdrop-blur-sm border-t border-stone-200">
-      <div className="max-w-6xl mx-auto px-[6%] py-12 md:py-16">
+      <div className="max-w-6xl mx-auto px-[6%] py-8 sm:py-12 md:py-16">
         <div className="flex flex-col items-center text-center">
           <div className="relative w-14 h-14 overflow-hidden rounded-full border border-stone-200">
             <Image
@@ -26,7 +26,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-600">
+        <nav className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-600">
           <a href="#shop" className="hover:text-stone-900 transition-colors">
             Collection
           </a>
@@ -41,7 +41,7 @@ export default function Footer() {
           </Link>
         </nav>
 
-        <div className="w-12 h-px bg-stone-300 mx-auto my-8" />
+        <div className="w-12 h-px bg-stone-300 mx-auto my-6 sm:my-8" />
 
         <div className="flex flex-col items-center gap-2 text-xs text-stone-500 text-center">
           <a

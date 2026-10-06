@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Exchange & Return Policy | Little Meadow",
+  title: "Exchange & Return Policy",
   description: "Exchange and return policy for Little Meadow by Ayra & Hadin.",
 };
 
