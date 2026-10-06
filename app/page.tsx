@@ -8,6 +8,7 @@ import Hero from "./components/Hero";
 import ProductCard from "./components/ProductCard";
 import CartDrawer from "./components/CartDrawer";
 import CheckoutModal from "./components/CheckoutModal";
+import Footer from "./components/Footer";
 
 interface SupabaseProductRow {
   id: number | string;
@@ -270,15 +271,7 @@ export default function Home() {
         )}
       </section>
 
-      <footer className="py-6 sm:py-9 md:py-12 text-center bg-[#faf8f5]/50 border-t border-stone-200 text-stone-500 text-xs">
-        <div className="font-bold text-stone-900 mb-1 text-sm">
-          Little Meadow
-        </div>
-        <p className="mb-2">Thoughtful kidswear for daily adventures.</p>
-        <p className="text-stone-400">
-          © 2026 Little Meadow. All rights reserved. · hello@littlemeadow.pk
-        </p>
-      </footer>
+      <Footer />
 
       <CartDrawer
         isOpen={isCartOpen}
