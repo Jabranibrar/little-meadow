@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Nunito } from "next/font/google";
+import { CartProvider } from "./context/CartContext";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -49,7 +50,7 @@ export default function RootLayout({
           style={{ backgroundImage: "url('/little-meadow.jpeg')" }}
         />
         <div aria-hidden className="fixed inset-0 -z-10 bg-[#faf8f5]/70" />
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );
