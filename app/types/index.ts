@@ -5,6 +5,8 @@ export interface Product {
   desc: string;
   category: "boy" | "girl" | "unisex";
   image: string;
+  images: string[];
+  description: string;
 }
 
 export interface CartItem {
