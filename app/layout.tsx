@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Nunito } from "next/font/google";
 import { CartProvider } from "./context/CartContext";
 import Analytics from "./components/Analytics";
 // import WhatsAppButton from "./components/WhatsAppButton";
+import ScrollToTop from "./components/ScrollToTop";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -55,6 +56,7 @@ export default function RootLayout({
         <Analytics />
         <CartProvider>{children}</CartProvider>
         {/* <WhatsAppButton /> */}
+        <ScrollToTop />
       </body>
     </html>
   );
