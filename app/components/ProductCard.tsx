@@ -20,17 +20,27 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState<string>("1-2Y");
   const href = `/product/${product.id}`;
+  const soldOut = product.stock !== null && product.stock <= 0;
 
   return (
     <div className="border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
       <div>
-        <ImageSlider
-          images={product.images}
-          alt={product.name}
-          href={href}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="aspect-4/5 border-b border-stone-100"
-        />
+        <div className="relative border-b border-stone-100">
+          <div className={soldOut ? "opacity-60" : ""}>
+            <ImageSlider
+              images={product.images}
+              alt={product.name}
+              href={href}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="aspect-[4/5]"
+            />
+          </div>
+          {soldOut && (
+            <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-stone-900 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+              Sold Out
+            </span>
+          )}
+        </div>
 
         <div className="p-5">
           <div className="flex items-center justify-between mb-2">
@@ -77,9 +87,10 @@ export default function ProductCard({
       <div className="p-5 pt-0">
         <button
           onClick={() => onAddToCart(product, selectedSize, 1)}
-          className="w-full bg-stone-900 text-white text-xs font-bold uppercase tracking-wider py-3 rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+          disabled={soldOut}
+          className="w-full bg-stone-900 text-white text-xs font-bold uppercase tracking-wider py-3 rounded-lg hover:bg-stone-800 transition-colors cursor-pointer disabled:bg-stone-300 disabled:text-stone-500 disabled:cursor-not-allowed disabled:hover:bg-stone-300"
         >
-          Add To Bag ({selectedSize})
+          {soldOut ? "Sold Out" : `Add To Bag (${selectedSize})`}
         </button>
       </div>
     </div>

@@ -8,12 +8,14 @@ import { mapProduct, SupabaseProductRow } from "./lib/products";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import ProductCard from "./components/ProductCard";
+import { ProductSkeletonGrid } from "./components/ProductSkeleton";
 import Footer from "./components/Footer";
 
 export default function Home() {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<"all" | "boy" | "girl">("all");
+  const [loading, setLoading] = useState(true);
   const visibleProducts =
     category === "all"
       ? products
@@ -27,6 +29,7 @@ export default function Home() {
       } else if (data) {
         setProducts((data as SupabaseProductRow[]).map(mapProduct));
       }
+      setLoading(false);
     }
 
     fetchProducts();
@@ -146,10 +149,10 @@ export default function Home() {
           </p>
         </div>
 
-        {products.length === 0 ? (
-          <p className="text-center text-stone-400 py-12">
-            Loading products...
-          </p>
+        {loading ? (
+          <ProductSkeletonGrid />
+        ) : visibleProducts.length === 0 ? (
+          <p className="text-center text-stone-400 py-12">No products found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {visibleProducts.map((product) => (

@@ -92,7 +92,11 @@ export default function CheckoutModal({
               </label>
               <input
                 required
-                type="text"
+                type="tel"
+                inputMode="numeric"
+                maxLength={13}
+                pattern="(\+?92|0)?3[0-9]{9}"
+                title="Enter a valid mobile number, e.g. 03001234567"
                 placeholder="03001234567"
                 value={formData.phone}
                 onChange={(e) =>

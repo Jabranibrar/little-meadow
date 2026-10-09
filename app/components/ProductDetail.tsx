@@ -14,6 +14,10 @@ export default function ProductDetail({ product }: { product: Product }) {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [size, setSize] = useState<string>("1-2Y");
 
+  const soldOut = product.stock !== null && product.stock <= 0;
+  const lowStock =
+    product.stock !== null && product.stock > 0 && product.stock <= 5;
+
   return (
     <div className="min-h-screen text-stone-900 font-sans">
       <Navbar totalCount={totalCount} onOpenCart={openCart} />
@@ -101,9 +105,10 @@ export default function ProductDetail({ product }: { product: Product }) {
 
             <button
               onClick={() => addToCart(product, size, 1)}
-              className="mt-6 w-full bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+              disabled={soldOut}
+              className="mt-6 w-full bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 rounded-lg hover:bg-stone-800 transition-colors cursor-pointer disabled:bg-stone-300 disabled:text-stone-500 disabled:cursor-not-allowed disabled:hover:bg-stone-300"
             >
-              Add To Bag ({size})
+              {soldOut ? "Sold Out" : `Add To Bag (${size})`}
             </button>
 
             <ul className="mt-6 space-y-2.5 text-xs sm:text-sm text-stone-600 border-t border-stone-200 pt-5">
@@ -116,6 +121,15 @@ export default function ProductDetail({ product }: { product: Product }) {
                   className="underline underline-offset-4 hover:text-stone-900"
                 >
                   Read policy
+                </Link>
+              </li>
+              <li>
+                Delivery in 3-5 working days.{" "}
+                <Link
+                  href="/delivery-info"
+                  className="underline underline-offset-4 hover:text-stone-900"
+                >
+                  Delivery info
                 </Link>
               </li>
             </ul>

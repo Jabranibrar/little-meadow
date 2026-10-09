@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 type Filter = "all" | "boy" | "girl";
 
@@ -17,18 +19,36 @@ export default function Navbar({
   onSelectCategory,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const pick = (c: Filter) => {
-    onSelectCategory?.(c);
+  const handleNavClick = (hash: string, category?: Filter) => {
     setMenuOpen(false);
+
+    if (category) {
+      sessionStorage.setItem("lm_filter", category);
+    } else {
+      sessionStorage.removeItem("lm_filter");
+    }
+
+    if (pathname !== "/") {
+      router.push(`/${hash}`);
+    } else {
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      } else {
+        router.push(`/${hash}`);
+      }
+    }
   };
 
   const linkClass =
-    "relative hover:text-stone-900 transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-stone-900 after:transition-all hover:after:w-full";
+    "relative hover:text-stone-900 transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-stone-900 after:transition-all hover:after:w-full cursor-pointer";
 
   return (
     <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
-      <a href="#top" className="flex items-center gap-2.5">
+      <Link href="/" className="flex items-center gap-2.5">
         <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-full border border-stone-200">
           <Image
             src="/little-meadow.jpeg"
@@ -46,21 +66,30 @@ export default function Navbar({
             Kidswear 1-5Y
           </span>
         </div>
-      </a>
+      </Link>
 
       <nav className="hidden md:flex gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
-        <a href="#shop" onClick={() => pick("all")} className={linkClass}>
+        <button
+          onClick={() => handleNavClick("#shop", "all")}
+          className={linkClass}
+        >
           Collection
-        </a>
-        <a href="#shop" onClick={() => pick("boy")} className={linkClass}>
+        </button>
+        <button
+          onClick={() => handleNavClick("#shop", "boy")}
+          className={linkClass}
+        >
           Boy
-        </a>
-        <a href="#shop" onClick={() => pick("girl")} className={linkClass}>
+        </button>
+        <button
+          onClick={() => handleNavClick("#shop", "girl")}
+          className={linkClass}
+        >
           Girl
-        </a>
-        <a href="#story" className={linkClass}>
+        </button>
+        <button onClick={() => handleNavClick("#story")} className={linkClass}>
           Our Story
-        </a>
+        </button>
       </nav>
 
       <div className="flex items-center gap-2.5 md:gap-3">
@@ -123,34 +152,30 @@ export default function Navbar({
             onClick={() => setMenuOpen(false)}
           />
           <nav className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[5%] py-3 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
-            <a
-              href="#shop"
-              onClick={() => pick("all")}
-              className="py-3.5 border-b border-stone-100"
+            <button
+              onClick={() => handleNavClick("#shop", "all")}
+              className="py-3.5 border-b border-stone-100 text-left"
             >
               Collection
-            </a>
-            <a
-              href="#shop"
-              onClick={() => pick("boy")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500"
+            </button>
+            <button
+              onClick={() => handleNavClick("#shop", "boy")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
             >
               Boy
-            </a>
-            <a
-              href="#shop"
-              onClick={() => pick("girl")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500"
+            </button>
+            <button
+              onClick={() => handleNavClick("#shop", "girl")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
             >
               Girl
-            </a>
-            <a
-              href="#story"
-              onClick={() => setMenuOpen(false)}
-              className="py-3.5"
+            </button>
+            <button
+              onClick={() => handleNavClick("#story")}
+              className="py-3.5 text-left"
             >
               Our Story
-            </a>
+            </button>
           </nav>
         </>
       )}

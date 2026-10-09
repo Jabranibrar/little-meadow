@@ -152,7 +152,7 @@ export default function ImageSlider({
             aria-label="Next image"
             className={`absolute right-2 md:right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-stone-200 bg-white/85 text-stone-800 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-stone-900 hover:text-white hover:border-stone-900 cursor-pointer md:opacity-0 md:group-hover/slider:opacity-100 ${
               active === images.length - 1
-                ? "pointer-events-none !opacity-0"
+                ? "pointer-events-none opacity-0!"
                 : ""
             }`}
           >

@@ -39,6 +39,24 @@ export default function Footer() {
           >
             Exchange &amp; Return Policy
           </Link>
+          <Link
+            href="/delivery-info"
+            className="hover:text-stone-900 transition-colors"
+          >
+            Delivery Info
+          </Link>
+          <Link
+            href="/privacy-policy"
+            className="hover:text-stone-900 transition-colors"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            href="/terms"
+            className="hover:text-stone-900 transition-colors"
+          >
+            Terms
+          </Link>
         </nav>
 
         <div className="w-12 h-px bg-stone-300 mx-auto my-6 sm:my-8" />

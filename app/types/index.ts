@@ -7,6 +7,7 @@ export interface Product {
   image: string;
   images: string[];
   description: string;
+  stock: number | null;
 }
 
 export interface CartItem {

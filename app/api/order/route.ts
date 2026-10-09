@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { calcDelivery } from "../../lib/config";
 import { Resend } from "resend";
 
 const supabase = createClient(
@@ -9,6 +10,9 @@ const supabase = createClient(
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 type Item = { name: string; size: string; qty: number; price: number };
+type RawItem = { id: number; size: string; qty: number };
+
+const SIZES = ["1-2Y", "2-3Y", "3-4Y", "4-5Y"];
 
 const esc = (s: unknown) =>
   String(s ?? "")
@@ -17,11 +21,72 @@ const esc = (s: unknown) =>
     .replace(/>/g, "&gt;");
 
 export async function POST(req: Request) {
-  const { orderId, form, items, total } = await req.json();
+  const { orderId, form, items: rawItems } = await req.json();
 
-  if (!orderId || !form?.name || !form?.phone || !items?.length) {
+  const phoneOk = /^(\+?92|0)?3\d{9}$/.test(
+    String(form?.phone ?? "").replace(/[\s-]/g, "")
+  );
+
+  if (
+    !orderId ||
+    !form?.name ||
+    !form?.address ||
+    !phoneOk ||
+    !Array.isArray(rawItems) ||
+    rawItems.length === 0 ||
+    rawItems.length > 30
+  ) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
+
+  const valid = (rawItems as RawItem[]).every(
+    (i) =>
+      Number.isInteger(i.id) &&
+      SIZES.includes(i.size) &&
+      Number.isInteger(i.qty) &&
+      i.qty >= 1 &&
+      i.qty <= 20
+  );
+  if (!valid) return NextResponse.json({ ok: false }, { status: 400 });
+
+  const ids = [...new Set((rawItems as RawItem[]).map((i) => i.id))];
+  const { data: dbProducts, error: pErr } = await supabase
+    .from("products")
+    .select("id,title,price,stock")
+    .in("id", ids);
+
+  if (pErr) console.error("Products fetch error:", pErr);
+  if (pErr || !dbProducts || dbProducts.length !== ids.length) {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  const wantedQty = (id: number) =>
+    (rawItems as RawItem[])
+      .filter((i) => i.id === id)
+      .reduce((s, i) => s + i.qty, 0);
+
+  for (const id of ids) {
+    const p = dbProducts.find((d) => Number(d.id) === id)!;
+    if (typeof p.stock === "number" && p.stock < wantedQty(id)) {
+      return NextResponse.json(
+        { ok: false, reason: "stock", product: p.title },
+        { status: 409 }
+      );
+    }
+  }
+
+  const items: Item[] = (rawItems as RawItem[]).map((i) => {
+    const p = dbProducts.find((d) => Number(d.id) === i.id)!;
+    return {
+      name: p.title || "Product",
+      size: i.size,
+      qty: i.qty,
+      price: Number(p.price),
+    };
+  });
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery = calcDelivery(subtotal);
+  const total = subtotal + delivery;
 
   const { error } = await supabase.from("orders").insert({
     order_id: orderId,
@@ -40,12 +105,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 
+  for (const id of ids) {
+    const p = dbProducts.find((d) => Number(d.id) === id)!;
+    if (typeof p.stock !== "number") continue;
+    await supabase
+      .from("products")
+      .update({ stock: p.stock - wantedQty(id) })
+      .eq("id", id);
+  }
+
   const digits = String(form.phone).replace(/\D/g, "");
   const intl = digits.startsWith("92")
     ? digits
     : "92" + digits.replace(/^0/, "");
 
-  const itemLines = (items as Item[])
+  const itemLines = items
     .map((i) => `- ${i.name} (Size: ${i.size}) x ${i.qty}`)
     .join("\n");
 
@@ -53,17 +127,18 @@ export async function POST(req: Request) {
     form.name
   }, thank you for ordering from *Little Meadow*.
 
-    *Order #:* ${orderId}
-    ${itemLines}
-    *Total:* Rs. ${Number(total).toLocaleString("en-PK")}
-    *Deliver to:* ${form.address}, ${form.city}
-    
-    Please reply *CONFIRM* to confirm your order and we will dispatch it shortly.
-    
-    *Team Little Meadow*`;
+*Order #:* ${orderId}
+${itemLines}
+*Total:* Rs. ${total.toLocaleString("en-PK")}
+*Deliver to:* ${form.address}, ${form.city}
+
+Please reply *CONFIRM* to confirm your order and we will dispatch it shortly.
+
+*Team Little Meadow*`;
+
   const waLink = `https://wa.me/${intl}?text=${encodeURIComponent(confirmMsg)}`;
 
-  const rows = (items as Item[])
+  const rows = items
     .map(
       (i) =>
         `<li>${esc(i.name)} (${esc(i.size)}) x ${i.qty} = PKR ${
@@ -87,6 +162,7 @@ export async function POST(req: Request) {
           <b>Payment:</b> ${esc(form.payment)}
         </p>
         <ul>${rows}</ul>
+        <p>Delivery: PKR ${delivery}</p>
         <p><b>Total: PKR ${total}</b></p>
         <p>
           <a href="${waLink}" style="background:#25D366;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">

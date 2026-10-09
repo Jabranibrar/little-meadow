@@ -44,5 +44,6 @@ export function mapProduct(item: SupabaseProductRow): Product {
       : "unisex") as Product["category"],
     image: images[0] || "",
     images,
+    stock: typeof item.stock === "number" ? item.stock : null,
   };
 }

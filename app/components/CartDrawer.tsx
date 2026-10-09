@@ -2,6 +2,8 @@
 
 import React from "react";
 import { CartItem } from "../types";
+import { useRouter } from "next/navigation";
+import { FREE_DELIVERY_ABOVE } from "../lib/config";
 import Image from "next/image";
 
 interface CartDrawerProps {
@@ -13,6 +15,7 @@ interface CartDrawerProps {
   onProceedCheckout: () => void;
   formatMoney: (amount: number) => string;
   totalAmount: number;
+  deliveryFee: number;
 }
 
 export default function CartDrawer({
@@ -24,7 +27,9 @@ export default function CartDrawer({
   onProceedCheckout,
   formatMoney,
   totalAmount,
+  deliveryFee,
 }: CartDrawerProps) {
+  const router = useRouter();
   if (!isOpen) return null;
 
   return (
@@ -57,11 +62,7 @@ export default function CartDrawer({
               <button
                 onClick={() => {
                   onClose();
-                  setTimeout(() => {
-                    document
-                      .getElementById("shop")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
+                  router.push("/#shop");
                 }}
                 className="bg-stone-900 text-white px-8 py-3 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-stone-800 transition-colors cursor-pointer"
               >
@@ -136,10 +137,28 @@ export default function CartDrawer({
 
         {cart.length > 0 && (
           <div className="border-t border-stone-100 pt-4 mt-4">
-            <div className="flex justify-between text-base font-bold text-stone-900 mb-4">
-              <span>Subtotal</span>
-              <span>{formatMoney(totalAmount)}</span>
+            <div className="space-y-1.5 text-sm text-stone-600 mb-3">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>{formatMoney(totalAmount)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery</span>
+                <span>
+                  {deliveryFee === 0 ? "Free" : formatMoney(deliveryFee)}
+                </span>
+              </div>
             </div>
+            <div className="flex justify-between text-base font-bold text-stone-900 mb-2">
+              <span>Total</span>
+              <span>{formatMoney(totalAmount + deliveryFee)}</span>
+            </div>
+            {deliveryFee > 0 && (
+              <p className="text-[11px] text-stone-500 mb-4">
+                Add {formatMoney(FREE_DELIVERY_ABOVE - totalAmount)} more for
+                free delivery.
+              </p>
+            )}
             <button
               onClick={onProceedCheckout}
               className="w-full bg-stone-900 text-white py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-stone-800 transition-colors cursor-pointer"

@@ -4,6 +4,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Product, CartItem, CheckoutFormData } from "../types";
 import CartDrawer from "../components/CartDrawer";
 import CheckoutModal from "../components/CheckoutModal";
+import { calcDelivery } from "../lib/config";
+import { trackPurchase } from "../lib/analytics";
+import { useRouter } from "next/navigation";
 
 interface CartContextValue {
   totalCount: number;
@@ -21,11 +24,47 @@ export function useCart() {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isPlacing, setIsPlacing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<{ id: string } | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        const raw = localStorage.getItem("lm-cart");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            setCart(
+              parsed.filter(
+                (x): x is CartItem =>
+                  x &&
+                  typeof x.key === "string" &&
+                  typeof x.id === "number" &&
+                  typeof x.price === "number" &&
+                  typeof x.qty === "number" &&
+                  x.qty > 0
+              )
+            );
+          }
+        }
+      } catch {}
+      setHydrated(true);
+    }, 0);
+
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem("lm-cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart, hydrated]);
 
   useEffect(() => {
     const locked = isCartOpen || isCheckoutOpen || !!orderSuccess;
@@ -77,6 +116,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const totalAmount = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalCount = cart.reduce((s, i) => s + i.qty, 0);
 
+  const deliveryFee = calcDelivery(totalAmount);
+
   const handleCheckoutSubmit = async (formData: CheckoutFormData) => {
     if (isPlacing) return;
     setIsPlacing(true);
@@ -89,16 +130,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({
           orderId,
           form: formData,
-          items: cart.map((i) => ({
-            name: i.name,
-            size: i.size,
-            qty: i.qty,
-            price: i.price,
-          })),
-          total: totalAmount,
+          items: cart.map((i) => ({ id: i.id, size: i.size, qty: i.qty })),
         }),
       });
-      if (!res.ok) throw new Error("Order failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        if (data?.reason === "stock") {
+          alert(
+            `Sorry, "${data.product}" is not available in the selected quantity.`
+          );
+          return;
+        }
+        throw new Error("Order failed");
+      }
+
+      trackPurchase(totalAmount + deliveryFee, orderId);
 
       setCart([]);
       setIsCheckoutOpen(false);
@@ -133,6 +179,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }}
         formatMoney={formatMoney}
         totalAmount={totalAmount}
+        deliveryFee={deliveryFee}
       />
 
       <CheckoutModal
@@ -156,7 +203,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               shortly on WhatsApp to confirm it.
             </p>
             <button
-              onClick={() => setOrderSuccess(null)}
+              onClick={() => {
+                setOrderSuccess(null);
+                router.push("/#shop");
+              }}
               className="w-full bg-stone-900 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors cursor-pointer"
             >
               Continue Shopping
