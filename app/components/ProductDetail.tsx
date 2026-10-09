@@ -7,20 +7,31 @@ import { useCart } from "../context/CartContext";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ImageSlider from "./ImageSlider";
+import SearchModal from "./SearchModal";
+import { useRouter } from "next/navigation";
 
 const sizes = ["1-2Y", "2-3Y", "3-4Y", "4-5Y"];
 
-export default function ProductDetail({ product }: { product: Product }) {
+interface ProductDetailProps {
+  product: Product;
+  allProducts?: Product[];
+}
+
+export default function ProductDetail({ product }: ProductDetailProps) {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [size, setSize] = useState<string>("1-2Y");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
 
   const soldOut = product.stock !== null && product.stock <= 0;
-  const lowStock =
-    product.stock !== null && product.stock > 0 && product.stock <= 5;
 
   return (
     <div className="min-h-screen text-stone-900 font-sans">
-      <Navbar totalCount={totalCount} onOpenCart={openCart} />
+      <Navbar
+        totalCount={totalCount}
+        onOpenCart={openCart}
+        onOpenSearch={() => setIsSearchOpen(true)}
+      />
 
       <main className="max-w-6xl mx-auto px-[5%] md:px-[6%] py-6 sm:py-10 md:py-14">
         <Link
@@ -138,6 +149,16 @@ export default function ProductDetail({ product }: { product: Product }) {
       </main>
 
       <Footer />
+
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        products={[product]}
+        formatMoney={formatMoney}
+        onSelectProduct={(selectedProduct) => {
+          router.push(`/product/${selectedProduct.id}`);
+        }}
+      />
     </div>
   );
 }

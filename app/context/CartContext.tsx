@@ -30,7 +30,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isPlacing, setIsPlacing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<{ id: string } | null>(null);
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   const [hydrated, setHydrated] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3500);
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -77,9 +87,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const formatMoney = (n: number): string => "PKR " + n.toLocaleString("en-PK");
 
   const addToCart = (product: Product, size: string, qty: number) => {
+    const currentStock =
+      product.stock !== null && product.stock !== undefined
+        ? product.stock
+        : 999;
     const key = product.id + "-" + size;
+
     setCart((prev) => {
       const found = prev.find((x) => x.key === key);
+      const existingQty = found ? found.qty : 0;
+
+      if (existingQty + qty > currentStock) {
+        showToast(
+          `Only ${currentStock} items left in stock for "${product.name}".`
+        );
+        return prev;
+      }
+
       if (found) {
         return prev.map((x) =>
           x.key === key ? { ...x, qty: x.qty + qty } : x
@@ -95,6 +119,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           image: product.image,
           size,
           qty,
+          stock: product.stock,
         },
       ];
     });
@@ -104,7 +129,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const changeQty = (key: string, delta: number) => {
     setCart((prev) =>
       prev
-        .map((x) => (x.key === key ? { ...x, qty: x.qty + delta } : x))
+        .map((x) => {
+          if (x.key === key) {
+            const newQty = x.qty + delta;
+            const maxStock =
+              x.stock !== null && x.stock !== undefined ? x.stock : 999;
+
+            if (delta > 0 && newQty > maxStock) {
+              showToast(
+                `Maximum available stock reached (${maxStock} items) for "${x.name}".`
+              );
+              return x;
+            }
+
+            if (newQty <= 0) return x;
+            return { ...x, qty: newQty };
+          }
+          return x;
+        })
         .filter((x) => x.qty > 0)
     );
   };
@@ -136,8 +178,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) {
         const data = await res.json().catch(() => null);
         if (data?.reason === "stock") {
-          alert(
-            `Sorry, "${data.product}" is not available in the selected quantity.`
+          showToast(
+            `Item "${data.product}" is currently out of stock or limited.`
           );
           return;
         }
@@ -150,7 +192,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsCheckoutOpen(false);
       setOrderSuccess({ id: orderId });
     } catch {
-      alert("Order place nahi ho saka, dobara try karein.");
+      showToast("Unable to place order. Please try again.");
     } finally {
       setIsPlacing(false);
     }
@@ -166,6 +208,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+
+      {toastMessage && (
+        <div className="fixed top-6 right-6 z-9999 bg-stone-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-stone-800 flex items-center gap-3 animate-fade-in transition-all">
+          <div className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />
+          <span className="text-xs sm:text-sm font-medium tracking-wide">
+            {toastMessage}
+          </span>
+        </div>
+      )}
 
       <CartDrawer
         isOpen={isCartOpen}
@@ -190,7 +241,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       />
 
       {orderSuccess && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white max-w-sm w-full rounded-2xl p-6 sm:p-8 text-center shadow-2xl">
             <h2 className="text-2xl sm:text-3xl font-serif italic text-stone-900 mb-2">
               Thank you for your order

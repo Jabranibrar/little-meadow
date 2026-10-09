@@ -18,6 +18,7 @@ export interface CartItem {
   image: string;
   size: string;
   qty: number;
+  stock?: number | null;
 }
 
 export interface CheckoutFormData {

@@ -6,16 +6,46 @@ import { supabase } from "./lib/supabase";
 import { useCart } from "./context/CartContext";
 import { mapProduct, SupabaseProductRow } from "./lib/products";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
+import HeroComponent from "./components/Hero";
 import ProductCard from "./components/ProductCard";
 import { ProductSkeletonGrid } from "./components/ProductSkeleton";
 import Footer from "./components/Footer";
+import SearchModal from "./components/SearchModal";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
-  const [category, setCategory] = useState<"all" | "boy" | "girl">("all");
   const [loading, setLoading] = useState(true);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
+
+  const [category, setCategory] = useState<"all" | "boy" | "girl">(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("lm_filter") as
+        | "all"
+        | "boy"
+        | "girl"
+        | null;
+      if (saved) {
+        return saved;
+      }
+    }
+    return "all";
+  });
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("lm_filter");
+    if (saved) {
+      setTimeout(() => {
+        const shopEl = document.querySelector("#shop");
+        if (shopEl) {
+          shopEl.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, []);
+
   const visibleProducts =
     category === "all"
       ? products
@@ -40,14 +70,18 @@ export default function Home() {
       <Navbar
         totalCount={totalCount}
         onOpenCart={openCart}
-        onSelectCategory={setCategory}
+        onOpenSearch={() => setIsSearchOpen(true)}
+        onSelectCategory={(cat) => {
+          setCategory(cat);
+          sessionStorage.setItem("lm_filter", cat);
+        }}
       />
 
-      <Hero />
+      <HeroComponent />
 
       <section
         id="story"
-        className="relative py-7 md:py-14 px-6 md:px-12 border-b border-stone-200 text-stone-800 overflow-hidden "
+        className="relative py-7 md:py-14 px-6 md:px-12 border-b border-stone-200 text-stone-800 overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-pink-200/50"></div>
@@ -75,28 +109,10 @@ export default function Home() {
           <div className="space-y-4 text-stone-700 text-sm md:text-base leading-relaxed text-left md:text-center max-w-2xl mx-auto">
             <p>
               They inspired us to see childhood through different eyes: softer,
-              brighter, and filled with little moments worth remembering. The
-              tiny hands reaching for us, the dresses chosen for special
-              mornings, the laughter that fills a room, and the fleeting days we
-              wish we could hold onto forever.
+              brighter, and filled with little moments worth remembering.
             </p>
             <p className="font-medium text-stone-900 text-center py-1">
               Little Meadow was created from that feeling.
-            </p>
-            <p>
-              A world where childhood meets thoughtful design — where every
-              piece is made to feel as beautiful as it looks, while leaving room
-              for children to simply be children.
-            </p>
-            <p>
-              We believe children&apos;s clothing should carry a sense of
-              wonder. It should be comfortable enough for play, beautiful enough
-              for celebrations, and timeless enough to become part of treasured
-              memories.
-            </p>
-            <p>
-              From delicate details to thoughtful silhouettes, every Little
-              Meadow piece is chosen with one simple thought in mind:
             </p>
           </div>
 
@@ -104,17 +120,6 @@ export default function Home() {
             <p className="text-stone-900 font-serif italic text-lg md:text-xl">
               &ldquo;Childhood is fleeting. Make every little moment
               beautiful.&rdquo;
-            </p>
-          </div>
-
-          <div className="space-y-4 text-stone-700 text-sm md:text-base leading-relaxed text-left md:text-center max-w-2xl mx-auto mb-0 md:mb-8">
-            <p>
-              Ayra and Hadin may be the inspiration behind our name, but every
-              little one who wears Little Meadow becomes part of our story.
-            </p>
-            <p className="text-stone-900 font-medium">
-              So, welcome to our little meadow —<br />a place for little dreams,
-              beautiful beginnings, and memories in the making.
             </p>
           </div>
 
@@ -127,9 +132,6 @@ export default function Home() {
             </p>
             <p className="text-xs font-semibold tracking-wider text-stone-800">
               Little Meadow by Ayra & Hadin
-            </p>
-            <p className="text-[11px] text-stone-500 mt-1 italic">
-              Made for little moments. Made to be remembered.
             </p>
           </div>
         </div>
@@ -168,6 +170,16 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        products={products}
+        formatMoney={formatMoney}
+        onSelectProduct={(product) => {
+          router.push(`/product/${product.id}`);
+        }}
+      />
     </div>
   );
 }

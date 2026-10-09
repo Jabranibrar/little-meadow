@@ -10,25 +10,26 @@ type Filter = "all" | "boy" | "girl";
 interface NavbarProps {
   totalCount: number;
   onOpenCart: () => void;
+  onOpenSearch: () => void;
   onSelectCategory?: (category: Filter) => void;
 }
 
 export default function Navbar({
   totalCount,
   onOpenCart,
+  onOpenSearch,
   onSelectCategory,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleNavClick = (hash: string, category?: Filter) => {
+  const handleNavClick = (hash: string, category: Filter) => {
     setMenuOpen(false);
 
-    if (category) {
-      sessionStorage.setItem("lm_filter", category);
-    } else {
-      sessionStorage.removeItem("lm_filter");
+    sessionStorage.setItem("lm_filter", category);
+    if (onSelectCategory) {
+      onSelectCategory(category);
     }
 
     if (pathname !== "/") {
@@ -48,7 +49,14 @@ export default function Navbar({
 
   return (
     <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
-      <Link href="/" className="flex items-center gap-2.5">
+      <Link
+        href="/"
+        onClick={() => {
+          sessionStorage.setItem("lm_filter", "all");
+          onSelectCategory?.("all");
+        }}
+        className="flex items-center gap-2.5"
+      >
         <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-full border border-stone-200">
           <Image
             src="/little-meadow.jpeg"
@@ -87,12 +95,44 @@ export default function Navbar({
         >
           Girl
         </button>
-        <button onClick={() => handleNavClick("#story")} className={linkClass}>
+        <button
+          onClick={() => {
+            setMenuOpen(false);
+            if (pathname !== "/") {
+              router.push("/#story");
+            } else {
+              document
+                .querySelector("#story")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+          className={linkClass}
+        >
           Our Story
         </button>
       </nav>
 
       <div className="flex items-center gap-2.5 md:gap-3">
+        <button
+          onClick={onOpenSearch}
+          aria-label="Open search"
+          className="w-10 h-10 rounded-full border border-stone-300 bg-white/80 hover:bg-stone-900 hover:text-white hover:border-stone-900 text-stone-800 transition-all flex items-center justify-center cursor-pointer"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4.5 w-4.5"
+            aria-hidden
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </button>
+
         <button
           onClick={onOpenCart}
           aria-label={`Open bag, ${totalCount} items`}
@@ -171,7 +211,16 @@ export default function Navbar({
               Girl
             </button>
             <button
-              onClick={() => handleNavClick("#story")}
+              onClick={() => {
+                setMenuOpen(false);
+                if (pathname !== "/") {
+                  router.push("/#story");
+                } else {
+                  document
+                    .querySelector("#story")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
               className="py-3.5 text-left"
             >
               Our Story
