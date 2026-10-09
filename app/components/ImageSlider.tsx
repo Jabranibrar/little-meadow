@@ -51,7 +51,9 @@ export default function ImageSlider({
   };
 
   return (
-    <div className={`relative bg-[#faf8f5] overflow-hidden ${className}`}>
+    <div
+      className={`group/slider relative bg-[#faf8f5] overflow-hidden ${className}`}
+    >
       <div
         ref={trackRef}
         onScroll={onScroll}
@@ -119,6 +121,55 @@ export default function ImageSlider({
             </button>
           ))}
         </div>
+      )}
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={() => goTo(active - 1)}
+            aria-label="Previous image"
+            className={`absolute left-2 md:left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-stone-200 bg-white/85 text-stone-800 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-stone-900 hover:text-white hover:border-stone-900 cursor-pointer md:opacity-0 md:group-hover/slider:opacity-100 ${
+              active === 0 ? "pointer-events-none !opacity-0" : ""
+            }`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 md:h-5 md:w-5"
+              aria-hidden
+            >
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => goTo(active + 1)}
+            aria-label="Next image"
+            className={`absolute right-2 md:right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-stone-200 bg-white/85 text-stone-800 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-stone-900 hover:text-white hover:border-stone-900 cursor-pointer md:opacity-0 md:group-hover/slider:opacity-100 ${
+              active === images.length - 1
+                ? "pointer-events-none !opacity-0"
+                : ""
+            }`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 md:h-5 md:w-5"
+              aria-hidden
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
       )}
       {zoomable && (
         <button
