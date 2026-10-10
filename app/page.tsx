@@ -156,7 +156,7 @@ export default function Home() {
         ) : visibleProducts.length === 0 ? (
           <p className="text-center text-stone-400 py-12">No products found.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {visibleProducts.map((product) => (
               <ProductCard
                 key={product.id}

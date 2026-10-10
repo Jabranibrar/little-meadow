@@ -70,7 +70,7 @@ export default function Navbar({
           <span className="font-serif italic text-xl md:text-2xl text-stone-900 leading-none">
             Little Meadow
           </span>
-          <span className="hidden sm:block text-[10px] tracking-[0.25em] uppercase text-stone-500 font-medium mt-1">
+          <span className="hidden min-[480px]:block text-[10px] tracking-[0.25em] uppercase text-stone-500 font-medium mt-1">
             Kidswear 1-5Y
           </span>
         </div>
