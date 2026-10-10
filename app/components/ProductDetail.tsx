@@ -128,7 +128,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <li>
                 Easy size exchange within 7 days.{" "}
                 <Link
-                  href="/exchange-policy"
+                  href="/privacy-policy"
                   className="underline underline-offset-4 hover:text-stone-900"
                 >
                   Read policy

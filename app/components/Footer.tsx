@@ -34,12 +34,6 @@ export default function Footer() {
             Our Story
           </a>
           <Link
-            href="/exchange-policy"
-            className="hover:text-stone-900 transition-colors"
-          >
-            Exchange &amp; Return Policy
-          </Link>
-          <Link
             href="/delivery-info"
             className="hover:text-stone-900 transition-colors"
           >
@@ -49,13 +43,7 @@ export default function Footer() {
             href="/privacy-policy"
             className="hover:text-stone-900 transition-colors"
           >
-            Privacy Policy
-          </Link>
-          <Link
-            href="/terms"
-            className="hover:text-stone-900 transition-colors"
-          >
-            Terms
+            Terms & Privacy Policy
           </Link>
         </nav>
 

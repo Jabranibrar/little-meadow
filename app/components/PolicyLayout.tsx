@@ -97,7 +97,7 @@ export default function PolicyLayout({
 
           {children}
 
-          <div className="mt-8 sm:mt-12 pt-8 sm:pt-10 border-t border-stone-300 text-center">
+          <div className="mt-8 sm:mt-12 text-center">
             <p className="text-sm font-semibold tracking-wide text-stone-900">
               Little Meadow by Ayra &amp; Hadin
             </p>
