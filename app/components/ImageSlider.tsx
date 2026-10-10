@@ -68,7 +68,7 @@ export default function ImageSlider({
               sizes={sizes}
               priority={priority && i === 0}
               draggable={false}
-              className="object-cover p-2"
+              className="object-contain p-2"
             />
           );
           return (
@@ -129,7 +129,7 @@ export default function ImageSlider({
             onClick={() => goTo(active - 1)}
             aria-label="Previous image"
             className={`absolute left-2 md:left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-stone-200 bg-white/85 text-stone-800 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-stone-900 hover:text-white hover:border-stone-900 cursor-pointer md:opacity-0 md:group-hover/slider:opacity-100 ${
-              active === 0 ? "pointer-events-none !opacity-0" : ""
+              active === 0 ? "pointer-events-none opacity-0!" : ""
             }`}
           >
             <svg
