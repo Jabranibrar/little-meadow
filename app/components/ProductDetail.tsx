@@ -69,7 +69,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 priority
                 zoomable
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="aspect-4/3 min-[480px]:aspect-4/5 rounded-2xl border border-stone-200 shadow-2xs"
+                className="aspect-4/3 rounded-2xl border border-stone-200 shadow-2xs"
               />
             </div>
             {soldOut && (

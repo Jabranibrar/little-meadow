@@ -32,7 +32,7 @@ export default function ProductCard({
               alt={product.name}
               href={href}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="aspect-4/3 min-[480px]:aspect-4/5 object-cover group-hover:scale-102 transition-transform duration-500"
+              className="aspect-4/3 object-cover group-hover:scale-102 transition-transform duration-500"
             />
           </div>
           {soldOut && (
