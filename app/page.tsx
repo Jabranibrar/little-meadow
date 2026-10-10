@@ -46,10 +46,17 @@ export default function Home() {
     }
   }, []);
 
-  const visibleProducts =
+  const filteredProducts =
     category === "all"
       ? products
       : products.filter((p) => p.category === category);
+
+  const visibleProducts = [...filteredProducts].sort((a, b) => {
+    const aSoldOut = a.stock !== null && a.stock <= 0;
+    const bSoldOut = b.stock !== null && b.stock <= 0;
+    if (aSoldOut === bSoldOut) return 0;
+    return aSoldOut ? 1 : -1;
+  });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -100,7 +107,9 @@ export default function Home() {
             Some of the most beautiful stories begin quietly.
             <br />
             Ours began with two little names —{" "}
-            <strong className="text-stone-900 font-medium">Ayra & Hadin</strong>
+            <strong className="text-stone-900 font-medium">
+              Ayra &amp; Hadin
+            </strong>
             .
           </p>
 
@@ -128,10 +137,10 @@ export default function Home() {
               With love,
             </p>
             <p className="font-serif font-medium text-stone-900 text-base mb-2">
-              Mama & Baba of Ayra & Hadin
+              Mama &amp; Baba of Ayra &amp; Hadin
             </p>
             <p className="text-xs font-semibold tracking-wider text-stone-800">
-              Little Meadow by Ayra & Hadin
+              Little Meadow by Ayra &amp; Hadin
             </p>
           </div>
         </div>

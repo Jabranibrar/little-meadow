@@ -6,7 +6,7 @@ export function ProductSkeletonGrid({ count = 4 }: { count?: number }) {
           key={i}
           className="animate-pulse overflow-hidden rounded-xl border border-stone-200 bg-white"
         >
-          <div className="aspect-4/5 bg-stone-200/70" />
+          <div className="aspect-4/3 min-[480px]:aspect-4/5 bg-stone-200/70" />
           <div className="space-y-3 p-5">
             <div className="h-3 w-16 rounded bg-stone-200" />
             <div className="h-4 w-3/4 rounded bg-stone-200" />

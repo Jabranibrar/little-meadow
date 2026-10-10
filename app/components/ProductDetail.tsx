@@ -26,7 +26,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const soldOut = product.stock !== null && product.stock <= 0;
 
   return (
-    <div className="min-h-screen text-stone-900 font-sans">
+    <div className="min-h-screen text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
       <Navbar
         totalCount={totalCount}
         onOpenCart={openCart}
@@ -38,7 +38,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           href="/#shop"
           className="group inline-flex items-center gap-3 mb-5 sm:mb-8 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-stone-600 hover:text-stone-900 transition-colors"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-300 bg-white/80 backdrop-blur-sm shadow-sm transition-all group-hover:border-stone-900 group-hover:bg-stone-900 group-hover:text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-300 bg-white/80 backdrop-blur-xs shadow-2xs transition-all group-hover:border-stone-900 group-hover:bg-stone-900 group-hover:text-white">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -60,19 +60,28 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </Link>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-14 items-start">
-          <div className="md:sticky md:top-28">
-            <ImageSlider
-              images={product.images}
-              alt={product.name}
-              priority
-              zoomable
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="aspect-4/5 rounded-2xl border border-stone-200 shadow-sm"
-            />
+          {/* Product Gallery Slider */}
+          <div className="md:sticky md:top-28 relative">
+            <div className={soldOut ? "opacity-60 grayscale-20" : ""}>
+              <ImageSlider
+                images={product.images}
+                alt={product.name}
+                priority
+                zoomable
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="aspect-4/3 min-[480px]:aspect-4/5 rounded-2xl border border-stone-200 shadow-2xs"
+              />
+            </div>
+            {soldOut && (
+              <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-stone-900/90 backdrop-blur-xs px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
+                Sold Out
+              </span>
+            )}
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-8">
-            <span className="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-stone-100 text-stone-600 rounded">
+          {/* Product Details & Actions */}
+          <div className="bg-white/80 backdrop-blur-xs rounded-2xl border border-stone-200 shadow-2xs p-5 sm:p-8">
+            <span className="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-stone-100 text-stone-600 rounded-md">
               {product.category}
             </span>
 
@@ -92,6 +101,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </p>
             )}
 
+            {/* Size Selector */}
             <div className="mt-6">
               <div className="text-[11px] uppercase font-bold text-stone-500 mb-2 tracking-wider">
                 Select Size
@@ -101,12 +111,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   <button
                     key={sz}
                     type="button"
+                    disabled={soldOut}
                     onClick={() => setSize(sz)}
                     className={`py-2.5 text-xs sm:text-sm font-semibold rounded-lg border transition-all cursor-pointer ${
-                      size === sz
-                        ? "bg-stone-900 text-white border-stone-900 shadow-sm"
+                      size === sz && !soldOut
+                        ? "bg-stone-900 text-white border-stone-900 shadow-2xs"
                         : "bg-white text-stone-700 border-stone-200 hover:border-stone-400"
-                    }`}
+                    } disabled:opacity-40 disabled:cursor-not-allowed`}
                   >
                     {sz}
                   </button>
@@ -114,31 +125,41 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </div>
             </div>
 
+            {/* Add to Bag Button */}
             <button
               onClick={() => addToCart(product, size, 1)}
               disabled={soldOut}
-              className="mt-6 w-full bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 rounded-lg hover:bg-stone-800 transition-colors cursor-pointer disabled:bg-stone-300 disabled:text-stone-500 disabled:cursor-not-allowed disabled:hover:bg-stone-300"
+              className="mt-6 w-full bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 rounded-xl hover:bg-stone-800 transition-colors cursor-pointer disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed"
             >
-              {soldOut ? "Sold Out" : `Add To Bag (${size})`}
+              {soldOut ? "Out of Stock" : `Add To Bag (${size})`}
             </button>
 
+            {/* Trust Badges & Policies */}
             <ul className="mt-6 space-y-2.5 text-xs sm:text-sm text-stone-600 border-t border-stone-200 pt-5">
-              <li>Cash on Delivery available</li>
-              <li>Order confirmation on WhatsApp</li>
-              <li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                Cash on Delivery available
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                Instant WhatsApp order confirmation
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                 Easy size exchange within 7 days.{" "}
                 <Link
-                  href="/privacy-policy"
-                  className="underline underline-offset-4 hover:text-stone-900"
+                  href="/terms"
+                  className="underline underline-offset-4 font-medium hover:text-stone-900"
                 >
                   Read policy
                 </Link>
               </li>
-              <li>
-                Delivery in 3-5 working days.{" "}
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                Delivery in 3–5 working days.{" "}
                 <Link
                   href="/delivery-info"
-                  className="underline underline-offset-4 hover:text-stone-900"
+                  className="underline underline-offset-4 font-medium hover:text-stone-900"
                 >
                   Delivery info
                 </Link>
