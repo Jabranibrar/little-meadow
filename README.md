@@ -1,25 +1,24 @@
 # Little Meadow
 
-**Little Meadow by Ayra & Hadin** is a kidswear storefront for ages 1 to 5 years. Products are managed in Supabase, customers browse by Boy / Girl, build a bag, and place orders that are sent to the store owner on WhatsApp.
+**Little Meadow by Ayra & Hadin** is a luxury boutique kidswear storefront for ages 1 to 5 years. Products are managed in Supabase, customers browse by Boy / Girl categories, select sizes (1–2Y to 4–5Y), build a bag with live stock validation, and place instant Cash on Delivery orders integrated with WhatsApp order confirmation.
 
-**Live site:** https://little-meadow-pk.vercel.app
-
+**Live site:** https://little-meadow-pk.vercel.app  
 **Repository:** https://github.com/Jabranibrar/little-meadow
 
 ---
 
 ## Features
 
-- Product catalogue loaded from Supabase
-- Boy / Girl / Collection filtering (desktop nav and mobile hamburger menu)
-- Size selection per product (1-2Y to 4-5Y)
-- Shopping bag drawer with quantity controls and product thumbnails
-- Checkout form with Cash on Delivery
-- Order summary sent to the store via WhatsApp
-- Our Story section and Exchange & Return Policy page
-- Fully responsive layout with a fixed background image
-- Optimized images with `next/image`
-- SEO ready: metadata, Open Graph, `sitemap.xml`, `robots.txt`
+- **Product Catalogue & Stock Validation:** Dynamic inventory fetched from Supabase with real-time cart stock checking and automatic sorting of sold-out items to the end of the grid.
+- **Category Filtering:** Boy / Girl / All collections (supported via desktop nav and mobile menu with session persistence).
+- **Size Selection:** Tailored size selector (1-2Y to 4-5Y) directly integrated into product cards and detail views.
+- **Shopping Bag & Toast Alerts:** High z-index custom toast notifications replacing native alerts for out-of-stock and bag actions.
+- **Seamless Checkout:** Cash on Delivery form with automated WhatsApp order summary generation sent straight to the store owner.
+- **Unified Store Policies:** Clean, human-written combined **Terms & Privacy Policy** page (`/terms`) replacing cluttered separate files.
+- **Fully Responsive UI:** Crafted with Tailwind CSS v4 and custom typography (Cormorant Garamond & Nunito).
+- **SEO Ready:** Metadata, Open Graph tags, automated `sitemap.xml`, and `robots.txt`.
+
+---
 
 ## Tech Stack
 
@@ -32,6 +31,8 @@
 | Database  | Supabase (PostgreSQL)                    |
 | Hosting   | Vercel                                   |
 
+---
+
 ## Project Structure
 
 ```
@@ -40,22 +41,27 @@ app/
 │   ├── Navbar.tsx
 │   ├── Hero.tsx
 │   ├── ProductCard.tsx
+│   ├── ProductDetail.tsx
 │   ├── CartDrawer.tsx
 │   ├── CheckoutModal.tsx
+│   ├── SearchModal.tsx
 │   └── Footer.tsx
-├── exchange-policy/
+├── context/
+│   └── CartContext.tsx
+├── privacy-policy/
+│   └── page.tsx
+├── delivery-info/
 │   └── page.tsx
 ├── lib/
-│   └── supabase.ts
+│   ├── supabase.ts
+│   ├── products.ts
+│   └── config.ts
 ├── globals.css
-├── icon.png
 ├── layout.tsx
 ├── page.tsx
 ├── robots.ts
 ├── sitemap.ts
 └── types.ts
-public/
-└── little-meadow.jpeg
 ```
 
 ## Getting Started
