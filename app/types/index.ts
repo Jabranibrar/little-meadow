@@ -3,11 +3,19 @@ export interface Product {
   name: string;
   price: number;
   desc: string;
-  category: "boy" | "girl" | "unisex";
+  category: "boy" | "girl" | "unisex" | "newborn" | "frocks";
   image: string;
   images: string[];
   description: string;
   stock: number | null;
+  sizes: string[];
+  availableSizes: string[];
+  fabric: string;
+  occasion: string;
+  pieces: string;
+  care: string;
+  highlights: string[];
+  colors: { name: string; hex: string; images: string[] }[];
 }
 
 export interface CartItem {
@@ -19,6 +27,7 @@ export interface CartItem {
   size: string;
   qty: number;
   stock?: number | null;
+  color?: string;
 }
 
 export interface CheckoutFormData {

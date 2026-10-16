@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-type Filter = "all" | "boy" | "girl";
+type Filter = "all" | "boy" | "girl" | "newborn" | "frocks";
 
 interface NavbarProps {
   totalCount: number;
@@ -76,7 +76,7 @@ export default function Navbar({
         </div>
       </Link>
 
-      <nav className="hidden md:flex gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
+      <nav className="hidden lg:flex gap-7 xl:gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
         <button
           onClick={() => handleNavClick("#shop", "all")}
           className={linkClass}
@@ -94,6 +94,18 @@ export default function Navbar({
           className={linkClass}
         >
           Girl
+        </button>
+        <button
+          onClick={() => handleNavClick("#shop", "newborn")}
+          className={linkClass}
+        >
+          Newborn
+        </button>
+        <button
+          onClick={() => handleNavClick("#shop", "frocks")}
+          className={linkClass}
+        >
+          Frocks
         </button>
         <button
           onClick={() => {
@@ -165,7 +177,7 @@ export default function Navbar({
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
-          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-full border border-stone-300 bg-white/80 cursor-pointer"
+          className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-full border border-stone-300 bg-white/80 cursor-pointer"
         >
           <span
             className={`block w-4 h-0.5 bg-stone-900 transition-transform ${
@@ -188,10 +200,10 @@ export default function Navbar({
       {menuOpen && (
         <>
           <div
-            className="md:hidden fixed inset-0 top-16 bg-black/20 -z-10"
+            className="lg:hidden fixed inset-0 top-16 bg-black/20 -z-10"
             onClick={() => setMenuOpen(false)}
           />
-          <nav className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[5%] py-3 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
+          <nav className="lg:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[5%] py-3 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
             <button
               onClick={() => handleNavClick("#shop", "all")}
               className="py-3.5 border-b border-stone-100 text-left"
@@ -209,6 +221,18 @@ export default function Navbar({
               className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
             >
               Girl
+            </button>
+            <button
+              onClick={() => handleNavClick("#shop", "newborn")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
+            >
+              Newborn
+            </button>
+            <button
+              onClick={() => handleNavClick("#shop", "frocks")}
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
+            >
+              Frocks
             </button>
             <button
               onClick={() => {

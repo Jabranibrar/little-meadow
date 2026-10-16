@@ -11,7 +11,12 @@ import { useRouter } from "next/navigation";
 interface CartContextValue {
   totalCount: number;
   openCart: () => void;
-  addToCart: (product: Product, size: string, qty: number) => void;
+  addToCart: (
+    product: Product,
+    size: string,
+    qty: number,
+    color?: string
+  ) => void;
   formatMoney: (n: number) => string;
 }
 
@@ -86,24 +91,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const formatMoney = (n: number): string => "PKR " + n.toLocaleString("en-PK");
 
-  const addToCart = (product: Product, size: string, qty: number) => {
-    const currentStock =
-      product.stock !== null && product.stock !== undefined
-        ? product.stock
-        : 999;
-    const key = product.id + "-" + size;
-
+  const addToCart = (
+    product: Product,
+    size: string,
+    qty: number,
+    color?: string
+  ) => {
+    const key = [product.id, size, color ?? ""].join("-");
+    const image =
+      product.colors.find((c) => c.name === color)?.images[0] || product.image;
     setCart((prev) => {
       const found = prev.find((x) => x.key === key);
-      const existingQty = found ? found.qty : 0;
-
-      if (existingQty + qty > currentStock) {
-        showToast(
-          `Only ${currentStock} items left in stock for "${product.name}".`
-        );
-        return prev;
-      }
-
       if (found) {
         return prev.map((x) =>
           x.key === key ? { ...x, qty: x.qty + qty } : x
@@ -116,10 +114,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           id: product.id,
           name: product.name,
           price: product.price,
-          image: product.image,
+          image,
           size,
+          color,
           qty,
-          stock: product.stock,
         },
       ];
     });
@@ -172,7 +170,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({
           orderId,
           form: formData,
-          items: cart.map((i) => ({ id: i.id, size: i.size, qty: i.qty })),
+          items: cart.map((i) => ({
+            id: i.id,
+            size: i.size,
+            qty: i.qty,
+            color: i.color,
+          })),
         }),
       });
       if (!res.ok) {
@@ -180,6 +183,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (data?.reason === "stock") {
           showToast(
             `Item "${data.product}" is currently out of stock or limited.`
+          );
+          return;
+        }
+        if (data?.reason === "size") {
+          alert(
+            `Sorry, "${data.product}" in size ${data.size} is no longer available.`
+          );
+          return;
+        }
+        if (data?.reason === "color") {
+          alert(
+            `Please remove "${data.product}" from your bag and add it again with a colour.`
           );
           return;
         }

@@ -1,10 +1,8 @@
 "use client";
-
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ImageLightbox from "./ImageLightbox";
-import { useRef, useState } from "react";
-
 interface ImageSliderProps {
   images: string[];
   alt: string;
@@ -13,6 +11,7 @@ interface ImageSliderProps {
   priority?: boolean;
   zoomable?: boolean;
   className?: string;
+  activeIndex?: number;
 }
 
 export default function ImageSlider({
@@ -22,11 +21,19 @@ export default function ImageSlider({
   href,
   priority = false,
   zoomable = false,
+  activeIndex,
   className = "",
 }: ImageSliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (activeIndex === undefined) return;
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: activeIndex * el.clientWidth, behavior: "smooth" });
+  }, [activeIndex]);
 
   if (images.length === 0) {
     return (

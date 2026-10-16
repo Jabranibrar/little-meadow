@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { calcDelivery } from "../../lib/config";
+import { calcDelivery, DEFAULT_SIZES } from "../../lib/config";
 import { Resend } from "resend";
 
 const supabase = createClient(
@@ -9,10 +9,17 @@ const supabase = createClient(
 );
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
-type Item = { name: string; size: string; qty: number; price: number };
-type RawItem = { id: number; size: string; qty: number };
+type Item = {
+  name: string;
+  size: string;
+  color?: string;
+  qty: number;
+  price: number;
+};
+type RawItem = { id: number; size: string; qty: number; color?: string };
 
-const SIZES = ["1-2Y", "2-3Y", "3-4Y", "4-5Y"];
+const colorNames = (c: string[] | null) =>
+  (c ?? []).map((x) => String(x).split("|")[0].trim()).filter(Boolean);
 
 const esc = (s: unknown) =>
   String(s ?? "")
@@ -42,9 +49,13 @@ export async function POST(req: Request) {
   const valid = (rawItems as RawItem[]).every(
     (i) =>
       Number.isInteger(i.id) &&
-      SIZES.includes(i.size) &&
+      typeof i.size === "string" &&
+      i.size.length > 0 &&
+      i.size.length <= 12 &&
       Number.isInteger(i.qty) &&
       i.qty >= 1 &&
+      (i.color === undefined ||
+        (typeof i.color === "string" && i.color.length <= 30)) &&
       i.qty <= 20
   );
   if (!valid) return NextResponse.json({ ok: false }, { status: 400 });
@@ -52,7 +63,7 @@ export async function POST(req: Request) {
   const ids = [...new Set((rawItems as RawItem[]).map((i) => i.id))];
   const { data: dbProducts, error: pErr } = await supabase
     .from("products")
-    .select("id,title,price,stock")
+    .select("id,title,price,stock,sizes,available_sizes,colors")
     .in("id", ids);
 
   if (pErr) console.error("Products fetch error:", pErr);
@@ -75,15 +86,40 @@ export async function POST(req: Request) {
     }
   }
 
+  for (const i of rawItems as RawItem[]) {
+    const p = dbProducts.find((d) => Number(d.id) === i.id)!;
+    const all: string[] = p.sizes?.length ? p.sizes : DEFAULT_SIZES;
+    const avail: string[] = p.available_sizes ?? all;
+    if (!all.includes(i.size) || !avail.includes(i.size)) {
+      return NextResponse.json(
+        { ok: false, reason: "size", product: p.title, size: i.size },
+        { status: 409 }
+      );
+    }
+  }
+
+  for (const i of rawItems as RawItem[]) {
+    const p = dbProducts.find((d) => Number(d.id) === i.id)!;
+    const names = colorNames(p.colors);
+    if (names.length > 0 && (!i.color || !names.includes(i.color))) {
+      return NextResponse.json(
+        { ok: false, reason: "color", product: p.title },
+        { status: 409 }
+      );
+    }
+  }
+
   const items: Item[] = (rawItems as RawItem[]).map((i) => {
     const p = dbProducts.find((d) => Number(d.id) === i.id)!;
     return {
       name: p.title || "Product",
       size: i.size,
+      color: colorNames(p.colors).length ? i.color : undefined,
       qty: i.qty,
       price: Number(p.price),
     };
   });
+
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const delivery = calcDelivery(subtotal);
   const total = subtotal + delivery;
@@ -119,9 +155,12 @@ export async function POST(req: Request) {
     ? digits
     : "92" + digits.replace(/^0/, "");
 
-  const itemLines = items
-    .map((i) => `- ${i.name} (Size: ${i.size}) x ${i.qty}`)
-    .join("\n");
+  const itemLines = items.map(
+    (i) =>
+      `- ${i.name} (Size: ${i.size}${
+        i.color ? `, Colour: ${i.color}` : ""
+      }) x ${i.qty}`
+  );
 
   const confirmMsg = `Hello ${
     form.name
@@ -129,6 +168,7 @@ export async function POST(req: Request) {
 
 *Order #:* ${orderId}
 ${itemLines}
+*Delivery:* ${delivery === 0 ? "Free" : "Rs. " + delivery}
 *Total:* Rs. ${total.toLocaleString("en-PK")}
 *Deliver to:* ${form.address}, ${form.city}
 
@@ -141,9 +181,9 @@ Please reply *CONFIRM* to confirm your order and we will dispatch it shortly.
   const rows = items
     .map(
       (i) =>
-        `<li>${esc(i.name)} (${esc(i.size)}) x ${i.qty} = PKR ${
-          i.price * i.qty
-        }</li>`
+        `<li>${esc(i.name)} (${esc(i.size)}${
+          i.color ? ", " + esc(i.color) : ""
+        }) x ${i.qty} = PKR ${i.price * i.qty}</li>`
     )
     .join("");
 

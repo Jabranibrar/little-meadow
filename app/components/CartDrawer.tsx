@@ -98,6 +98,7 @@ export default function CartDrawer({
                       </h4>
                       <span className="text-[11px] font-medium text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">
                         Size: {item.size}
+                        {item.color ? ` · ${item.color}` : ""}
                       </span>
                       <div className="flex items-center gap-2 mt-2">
                         <button

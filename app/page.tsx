@@ -20,12 +20,16 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
-  const [category, setCategory] = useState<"all" | "boy" | "girl">(() => {
+  const [category, setCategory] = useState<
+    "all" | "boy" | "girl" | "newborn" | "frocks"
+  >(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("lm_filter") as
         | "all"
         | "boy"
         | "girl"
+        | "newborn"
+        | "frocks"
         | null;
       if (saved) {
         return saved;
