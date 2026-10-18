@@ -43,8 +43,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const soldOut = product.stock !== null && product.stock <= 0;
   const unavailable = soldOut || product.availableSizes.length === 0;
-  const lowStock =
-    product.stock !== null && product.stock > 0 && product.stock <= 5;
 
   const tiles = [
     { label: "Fabric", value: product.fabric },
@@ -118,10 +116,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {unavailable ? (
                 <span className="text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-stone-100 text-stone-500 rounded-md">
                   Out of stock
-                </span>
-              ) : lowStock ? (
-                <span className="text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-amber-50 text-amber-700 rounded-md">
-                  Only {product.stock} left
                 </span>
               ) : (
                 <span className="text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-md">
