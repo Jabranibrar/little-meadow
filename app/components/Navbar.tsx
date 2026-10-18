@@ -21,11 +21,13 @@ export default function Navbar({
   onSelectCategory,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileGirlOpen, setMobileGirlOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   const handleNavClick = (hash: string, category: Filter) => {
     setMenuOpen(false);
+    setMobileGirlOpen(false);
 
     sessionStorage.setItem("lm_filter", category);
     if (onSelectCategory) {
@@ -48,20 +50,22 @@ export default function Navbar({
     "relative hover:text-stone-900 transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-stone-900 after:transition-all hover:after:w-full cursor-pointer";
 
   return (
-    <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
+    <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md bg-white/90">
+      {/* Brand Logo */}
       <Link
         href="/"
         onClick={() => {
           sessionStorage.setItem("lm_filter", "all");
           onSelectCategory?.("all");
         }}
-        className="flex items-center gap-2.5"
+        className="flex items-center gap-2.5 group"
       >
-        <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-full border border-stone-200">
+        <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-full border border-stone-200 group-hover:border-stone-400 transition-colors">
           <Image
             src="/little-meadow.jpeg"
             alt="Little Meadow Logo"
             fill
+            sizes="(max-width: 768px) 36px, 44px"
             priority
             className="object-cover"
           />
@@ -76,7 +80,8 @@ export default function Navbar({
         </div>
       </Link>
 
-      <nav className="hidden lg:flex gap-7 xl:gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
+      {/* Desktop Navigation */}
+      <nav className="hidden lg:flex items-center gap-7 xl:gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
         <button
           onClick={() => handleNavClick("#shop", "all")}
           className={linkClass}
@@ -89,12 +94,46 @@ export default function Navbar({
         >
           Boy
         </button>
-        <button
-          onClick={() => handleNavClick("#shop", "girl")}
-          className={linkClass}
-        >
-          Girl
-        </button>
+
+        {/* Desktop Girl Dropdown */}
+        <div className="relative group inline-flex items-center py-2">
+          <button
+            onClick={() => handleNavClick("#shop", "girl")}
+            className={`${linkClass} inline-flex items-center gap-1.5`}
+          >
+            <span>Girl</span>
+            <svg
+              className="w-3 h-3 text-stone-400 group-hover:text-stone-900 transition-transform duration-200 group-hover:rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-44 bg-white/95 backdrop-blur-md border border-stone-200/80 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 z-50 flex flex-col text-[11px] font-medium tracking-wider">
+            <button
+              onClick={() => handleNavClick("#shop", "girl")}
+              className="px-4 py-2.5 text-left text-stone-600 hover:text-stone-900 hover:bg-stone-50 transition-colors rounded-t-xl"
+            >
+              All Girl Collection
+            </button>
+            <div className="h-px bg-stone-100 mx-3" />
+            <button
+              onClick={() => handleNavClick("#shop", "frocks")}
+              className="px-4 py-2.5 text-left text-stone-600 hover:text-stone-900 hover:bg-stone-50 transition-colors rounded-b-xl"
+            >
+              Frocks &amp; Dresses
+            </button>
+          </div>
+        </div>
+
         <button
           onClick={() => handleNavClick("#shop", "newborn")}
           className={linkClass}
@@ -124,6 +163,7 @@ export default function Navbar({
         </button>
       </nav>
 
+      {/* Action Buttons */}
       <div className="flex items-center gap-2.5 md:gap-3">
         <button
           onClick={onOpenSearch}
@@ -197,40 +237,81 @@ export default function Navbar({
         </button>
       </div>
 
+      {/* Mobile Drawer Menu */}
       {menuOpen && (
         <>
           <div
             className="lg:hidden fixed inset-0 top-16 bg-black/20 -z-10"
             onClick={() => setMenuOpen(false)}
           />
-          <nav className="lg:hidden absolute top-full left-0 right-0 bg-white border-b border-stone-200 shadow-lg px-[5%] py-3 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
+          <nav className="lg:hidden absolute top-full left-0 right-0 bg-white/98 backdrop-blur-md border-b border-stone-200 shadow-xl px-[6%] py-2 flex flex-col text-xs font-semibold uppercase tracking-[0.18em] text-stone-700 max-h-[75vh] overflow-y-auto">
             <button
               onClick={() => handleNavClick("#shop", "all")}
-              className="py-3.5 border-b border-stone-100 text-left"
+              className="py-3.5 border-b border-stone-100 text-left hover:text-stone-900 transition-colors"
             >
               Collection
             </button>
             <button
               onClick={() => handleNavClick("#shop", "boy")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-600 text-left hover:text-stone-900 transition-colors"
             >
               Boy
             </button>
-            <button
-              onClick={() => handleNavClick("#shop", "girl")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
-            >
-              Girl
-            </button>
+
+            {/* Mobile Girl Accordion Section */}
+            <div className="border-b border-stone-100">
+              <div className="flex items-center justify-between py-3.5 pl-4">
+                <button
+                  onClick={() => handleNavClick("#shop", "girl")}
+                  className="text-stone-600 hover:text-stone-900 text-left flex-1"
+                >
+                  Girl
+                </button>
+
+                {/* Perfectly Centered Plus/Minus Toggle Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMobileGirlOpen(!mobileGirlOpen);
+                  }}
+                  aria-label="Toggle Girl subcategories"
+                  className="w-7 h-7 rounded-full bg-stone-100 border border-stone-200/80 flex items-center justify-center text-stone-600 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all cursor-pointer shrink-0 leading-none"
+                >
+                  <span className="text-sm font-semibold flex items-center justify-center leading-none translate-y-[-0.5px] ml-0.5">
+                    {mobileGirlOpen ? "−" : "+"}
+                  </span>
+                </button>
+              </div>
+
+              {/* Subcategory Options */}
+              {mobileGirlOpen && (
+                <div className="ml-4 mb-3.5 pl-4 border-l-2 border-stone-200 flex flex-col space-y-2.5 py-1">
+                  <button
+                    onClick={() => handleNavClick("#shop", "girl")}
+                    className="text-left text-[11px] font-medium tracking-wider text-stone-500 hover:text-stone-900 transition-colors"
+                  >
+                    All Girl Collection
+                  </button>
+                  <button
+                    onClick={() => handleNavClick("#shop", "frocks")}
+                    className="text-left text-[11px] font-medium tracking-wider text-stone-500 hover:text-stone-900 transition-colors"
+                  >
+                    Frocks &amp; Dresses
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => handleNavClick("#shop", "newborn")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-600 text-left hover:text-stone-900 transition-colors"
             >
               Newborn
             </button>
             <button
               onClick={() => handleNavClick("#shop", "frocks")}
-              className="py-3.5 pl-4 border-b border-stone-100 text-stone-500 text-left"
+              className="py-3.5 pl-4 border-b border-stone-100 text-stone-600 text-left hover:text-stone-900 transition-colors"
             >
               Frocks
             </button>
@@ -245,7 +326,7 @@ export default function Navbar({
                     ?.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="py-3.5 text-left"
+              className="py-3.5 text-left hover:text-stone-900 transition-colors"
             >
               Our Story
             </button>
