@@ -13,6 +13,17 @@ import Footer from "./components/Footer";
 import SearchModal from "./components/SearchModal";
 import { useRouter } from "next/navigation";
 
+type FilterType =
+  | "all"
+  | "boy"
+  | "girl"
+  | "newborn"
+  | "frocks"
+  | "jackets"
+  | "boy-limited"
+  | "girl-limited"
+  | "limited";
+
 export default function Home() {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
@@ -20,17 +31,9 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
-  const [category, setCategory] = useState<
-    "all" | "boy" | "girl" | "newborn" | "frocks"
-  >(() => {
+  const [category, setCategory] = useState<FilterType>(() => {
     if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("lm_filter") as
-        | "all"
-        | "boy"
-        | "girl"
-        | "newborn"
-        | "frocks"
-        | null;
+      const saved = sessionStorage.getItem("lm_filter") as FilterType | null;
       if (saved) {
         return saved;
       }
@@ -50,10 +53,35 @@ export default function Home() {
     }
   }, []);
 
-  const filteredProducts =
-    category === "all"
-      ? products
-      : products.filter((p) => p.category === category);
+  const filteredProducts = products.filter((p) => {
+    if (category === "all") return true;
+
+    const stockNum = Number(p.stock);
+    const isLimited = !isNaN(stockNum) && stockNum > 0 && stockNum <= 3;
+    const pCat = p.category ? p.category.toLowerCase().trim() : "";
+
+    if (category === "boy-limited") {
+      return pCat === "boy" && isLimited;
+    }
+
+    if (category === "girl-limited") {
+      return (pCat === "girl" || pCat === "frocks") && isLimited;
+    }
+
+    if (category === "jackets") {
+      return pCat === "jackets" || p.name.toLowerCase().includes("jacket");
+    }
+
+    if (category === "girl") {
+      return pCat === "girl" || pCat === "frocks";
+    }
+
+    if (category === "boy") {
+      return pCat === "boy";
+    }
+
+    return pCat === category;
+  });
 
   const visibleProducts = [...filteredProducts].sort((a, b) => {
     const aSoldOut = a.stock !== null && a.stock <= 0;
