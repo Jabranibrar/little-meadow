@@ -188,7 +188,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       disabled={!available}
                       title={available ? undefined : "Not available"}
                       onClick={() => setSize(sz)}
-                      className={`min-w-[4rem] flex-1 px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-lg border transition-all ${
+                      className={`min-w-16 flex-1 px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-lg border transition-all ${
                         !available
                           ? "cursor-not-allowed border-stone-200 bg-stone-50 text-stone-300 line-through"
                           : size === sz
@@ -304,7 +304,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             </p>
           </Link>
           <Link
-            href="/exchange-policy"
+            href="/privacy-policy"
             className="group rounded-xl border border-stone-200 bg-white/80 p-5 transition-all hover:border-stone-400 hover:shadow-sm"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">

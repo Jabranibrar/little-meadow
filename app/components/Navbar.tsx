@@ -140,12 +140,12 @@ export default function Navbar({
         >
           Newborn
         </button>
-        <button
+        {/* <button
           onClick={() => handleNavClick("#shop", "frocks")}
           className={linkClass}
         >
           Frocks
-        </button>
+        </button> */}
         <button
           onClick={() => {
             setMenuOpen(false);
@@ -309,12 +309,12 @@ export default function Navbar({
             >
               Newborn
             </button>
-            <button
+            {/* <button
               onClick={() => handleNavClick("#shop", "frocks")}
               className="py-3.5 pl-4 border-b border-stone-100 text-stone-600 text-left hover:text-stone-900 transition-colors"
             >
               Frocks
-            </button>
+            </button> */}
             <button
               onClick={() => {
                 setMenuOpen(false);
