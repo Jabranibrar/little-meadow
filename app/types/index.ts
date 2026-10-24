@@ -3,7 +3,19 @@ export interface Product {
   name: string;
   price: number;
   desc: string;
-  category: "boy" | "girl" | "unisex" | "newborn" | "frocks";
+  category:
+    | "boy"
+    | "girl"
+    | "unisex"
+    | "newborn"
+    | "frocks"
+    | "jacket"
+    | "romper"
+    | "pajamaz"
+    | "dress"
+    | "jersi"
+    | "baby-suit"
+    | "newborn-set";
   image: string;
   images: string[];
   description: string;

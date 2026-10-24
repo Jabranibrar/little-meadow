@@ -208,7 +208,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               disabled={unavailable}
               className="mt-6 w-full bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 rounded-xl hover:bg-stone-800 transition-colors cursor-pointer disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed"
             >
-              {unavailable ? "Out of Stock" : `Add To Bag (${size})`}
+              {unavailable ? "Out of Stock" : `Add To Bag`}
             </button>
 
             <ul className="mt-6 space-y-2.5 text-xs sm:text-sm text-stone-600 border-t border-stone-200 pt-5">

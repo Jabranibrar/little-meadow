@@ -31,6 +31,8 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
+  const [visibleCount, setVisibleCount] = useState(12);
+
   const [category, setCategory] = useState<FilterType>(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("lm_filter") as FilterType | null;
@@ -83,12 +85,24 @@ export default function Home() {
     return pCat === category;
   });
 
-  const visibleProducts = [...filteredProducts].sort((a, b) => {
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     const aSoldOut = a.stock !== null && a.stock <= 0;
     const bSoldOut = b.stock !== null && b.stock <= 0;
     if (aSoldOut === bSoldOut) return 0;
     return aSoldOut ? 1 : -1;
   });
+
+  const visibleProducts = sortedProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedProducts.length;
+  const canShowLess = visibleCount > 12;
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 8);
+  };
+
+  const handleShowLess = () => {
+    setVisibleCount(12);
+  };
 
   useEffect(() => {
     async function fetchProducts() {
@@ -112,6 +126,7 @@ export default function Home() {
         onOpenSearch={() => setIsSearchOpen(true)}
         onSelectCategory={(cat) => {
           setCategory(cat);
+          setVisibleCount(12);
           sessionStorage.setItem("lm_filter", cat);
         }}
       />
@@ -194,19 +209,48 @@ export default function Home() {
 
         {loading ? (
           <ProductSkeletonGrid />
-        ) : visibleProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <p className="text-center text-stone-400 py-12">No products found.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {visibleProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={addToCart}
-                formatMoney={formatMoney}
-              />
-            ))}
-          </div>
+          <>
+            {/* Products Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+              {visibleProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={addToCart}
+                  formatMoney={formatMoney}
+                />
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+              {hasMore && (
+                <button
+                  onClick={handleLoadMore}
+                  className="px-8 py-3.5 bg-stone-900 hover:bg-stone-800 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-xl shadow-xs transition-all duration-200 cursor-pointer active:scale-95"
+                >
+                  Load More ({sortedProducts.length - visibleCount} remaining)
+                </button>
+              )}
+
+              {canShowLess && (
+                <button
+                  onClick={handleShowLess}
+                  className="px-6 py-3.5 bg-white hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-bold uppercase tracking-wider border border-stone-200 rounded-xl transition-all duration-200 cursor-pointer active:scale-95"
+                >
+                  Show Less
+                </button>
+              )}
+            </div>
+
+            {/* Counter Info */}
+            <p className="text-center text-xs text-stone-400 mt-4">
+              Showing {visibleProducts.length} of {sortedProducts.length}{" "}
+              products
+            </p>
+          </>
         )}
       </section>
 
