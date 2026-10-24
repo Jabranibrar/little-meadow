@@ -53,25 +53,51 @@ export default function Home() {
     const stockNum = Number(p.stock);
     const isLimited = !isNaN(stockNum) && stockNum > 0 && stockNum <= 3;
     const pCat = p.category ? p.category.toLowerCase().trim() : "";
+    const pName = p.name ? p.name.toLowerCase().trim() : "";
+    const isJacket = pCat.includes("jacket") || pName.includes("jacket");
+    const isFrockOrDress =
+      pCat.includes("frock") ||
+      pCat.includes("dress") ||
+      pName.includes("frock") ||
+      pName.includes("dress");
 
     if (category === "boy-limited") {
-      return pCat === "boy" && isLimited;
+      return (pCat === "boy" || pCat.includes("boy")) && isLimited;
     }
 
     if (category === "girl-limited") {
-      return (pCat === "girl" || pCat === "frocks") && isLimited;
+      return (
+        (pCat === "girl" || pCat.includes("girl") || isFrockOrDress) &&
+        isLimited
+      );
+    }
+
+    if (category === "limited") {
+      return isLimited;
     }
 
     if (category === "jackets") {
-      return pCat === "jackets" || p.name.toLowerCase().includes("jacket");
+      return isJacket;
     }
 
-    if (category === "girl") {
-      return pCat === "girl" || pCat === "frocks";
+    if (category === "frocks") {
+      return isFrockOrDress;
+    }
+
+    if (category === "newborn") {
+      return (
+        pCat.includes("newborn") ||
+        pName.includes("newborn") ||
+        pName.includes("baby")
+      );
     }
 
     if (category === "boy") {
-      return pCat === "boy";
+      return pCat === "boy" || pCat.includes("boy");
+    }
+
+    if (category === "girl") {
+      return pCat === "girl" || pCat.includes("girl") || isFrockOrDress;
     }
 
     return pCat === category;
