@@ -33,15 +33,7 @@ export default function Home() {
 
   const [visibleCount, setVisibleCount] = useState(12);
 
-  const [category, setCategory] = useState<FilterType>(() => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("lm_filter") as FilterType | null;
-      if (saved) {
-        return saved;
-      }
-    }
-    return "all";
-  });
+  const [category, setCategory] = useState<FilterType>("all");
 
   useEffect(() => {
     const saved = sessionStorage.getItem("lm_filter");
