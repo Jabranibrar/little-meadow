@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Product } from "../types";
 import ImageSlider from "./ImageSlider";
 import { getGallery, colorImageIndex } from "../lib/products";
+import QuickView from "./QuickView";
 
 interface ProductCardProps {
   product: Product;
@@ -28,6 +29,7 @@ export default function ProductCard({
   const [colorName, setColorName] = useState<string | undefined>(
     product.colors[0]?.name
   );
+  const [quickOpen, setQuickOpen] = useState(false);
   const gallery = getGallery(product);
   const slideIndex = colorImageIndex(gallery, product, colorName);
   const href = `/product/${product.id}`;
@@ -35,7 +37,7 @@ export default function ProductCard({
   const unavailable = soldOut || product.availableSizes.length === 0;
 
   return (
-    <div className="group border border-stone-200/80 rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+    <div className="group h-full border border-stone-200/80 rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
       <div>
         {/* Product Image Section */}
         <div className="relative border-b border-stone-100 overflow-hidden">
@@ -49,6 +51,29 @@ export default function ProductCard({
               className="aspect-square sm:aspect-4/3 object-cover group-hover:scale-102 transition-transform duration-500"
             />
           </div>
+
+          {/* Quick view button */}
+          <button
+            type="button"
+            onClick={() => setQuickOpen(true)}
+            aria-label="Quick view"
+            className="absolute right-2 top-2 sm:right-3 sm:top-3 z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-stone-200 bg-white/90 text-stone-800 shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-stone-900 hover:text-white cursor-pointer lg:translate-y-1 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+              aria-hidden
+            >
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+
           {unavailable && (
             <span className="pointer-events-none absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-stone-900/90 backdrop-blur-xs px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
               Sold Out
@@ -159,6 +184,16 @@ export default function ProductCard({
           {unavailable ? "Out of Stock" : `Add to bag`}
         </button>
       </div>
+
+      {/* Quick view dialog */}
+      {quickOpen && (
+        <QuickView
+          product={product}
+          formatMoney={formatMoney}
+          onAddToCart={onAddToCart}
+          onClose={() => setQuickOpen(false)}
+        />
+      )}
     </div>
   );
 }

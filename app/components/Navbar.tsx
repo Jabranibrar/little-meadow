@@ -263,7 +263,10 @@ export default function Navbar({
             Bag
           </span>
           {totalCount > 0 && (
-            <span className="min-w-5 h-5 px-1 bg-stone-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
+            <span
+              key={totalCount}
+              className="animate-bump min-w-5 h-5 px-1 bg-stone-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center"
+            >
               {totalCount}
             </span>
           )}

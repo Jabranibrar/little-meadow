@@ -11,6 +11,7 @@ import ProductCard from "./components/ProductCard";
 import { ProductSkeletonGrid } from "./components/ProductSkeleton";
 import Footer from "./components/Footer";
 import SearchModal from "./components/SearchModal";
+import Reveal from "./components/Reveal";
 import { useRouter } from "next/navigation";
 
 type FilterType =
@@ -233,13 +234,18 @@ export default function Home() {
           <>
             {/* Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-              {visibleProducts.map((product) => (
-                <ProductCard
+              {visibleProducts.map((product, i) => (
+                <Reveal
                   key={product.id}
-                  product={product}
-                  onAddToCart={addToCart}
-                  formatMoney={formatMoney}
-                />
+                  delay={(i % 4) * 80}
+                  className="h-full"
+                >
+                  <ProductCard
+                    product={product}
+                    onAddToCart={addToCart}
+                    formatMoney={formatMoney}
+                  />
+                </Reveal>
               ))}
             </div>
 
