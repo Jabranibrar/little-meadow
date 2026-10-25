@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Product } from "../types";
 import Image from "next/image";
 
@@ -12,6 +12,30 @@ interface SearchModalProps {
   onSelectProduct: (product: Product) => void;
 }
 
+const norm = (s: string) => s.toLowerCase().trim();
+
+function Highlight({ text, tokens }: { text: string; tokens: string[] }) {
+  if (tokens.length === 0) return <>{text}</>;
+  const escaped = tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const parts = text.split(new RegExp(`(${escaped.join("|")})`, "ig"));
+  return (
+    <>
+      {parts.map((p, i) =>
+        i % 2 === 1 ? (
+          <mark
+            key={i}
+            className="rounded-sm bg-pink-100 px-0.5 text-stone-900"
+          >
+            {p}
+          </mark>
+        ) : (
+          <span key={i}>{p}</span>
+        )
+      )}
+    </>
+  );
+}
+
 export default function SearchModal({
   isOpen,
   onClose,
@@ -20,56 +44,113 @@ export default function SearchModal({
   onSelectProduct,
 }: SearchModalProps) {
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const tokens = useMemo(
+    () => norm(query).split(/\s+/).filter(Boolean),
+    [query]
+  );
+
+  const results = useMemo(() => {
+    if (tokens.length === 0) return [];
+    return products
+      .filter((p) => {
+        const hay = norm(
+          [
+            p.name,
+            p.category,
+            p.description,
+            p.fabric,
+            p.occasion,
+            ...p.colors.map((c) => c.name),
+          ].join(" ")
+        );
+        return tokens.every((t) => hay.includes(t));
+      })
+      .slice(0, 20);
+  }, [products, tokens]);
+
+  const categories = useMemo(
+    () =>
+      [...new Set(products.map((p) => p.category))].filter(
+        (c) => c !== "unisex"
+      ),
+    [products]
+  );
 
   useEffect(() => {
     if (isOpen) {
-      const timer = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50);
+      const timer = setTimeout(() => inputRef.current?.focus(), 50);
       return () => clearTimeout(timer);
-    } else {
-      const resetTimer = setTimeout(() => setQuery(""), 150);
-      return () => clearTimeout(resetTimer);
     }
+    const resetTimer = setTimeout(() => setQuery(""), 150);
+    return () => clearTimeout(resetTimer);
   }, [isOpen]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    listRef.current
+      ?.querySelector('[data-active="true"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [active]);
 
   if (!isOpen) return null;
 
-  const filteredProducts =
-    query.trim() === ""
-      ? []
-      : products.filter(
-          (p) =>
-            p.name.toLowerCase().includes(query.toLowerCase()) ||
-            p.category.toLowerCase().includes(query.toLowerCase())
-        );
+  const choose = (p: Product) => {
+    onSelectProduct(p);
+    onClose();
+  };
+
+  const onInputKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (results.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActive((i) => Math.min(i + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      choose(results[active] ?? results[0]);
+    }
+  };
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 sm:pt-20 px-3 sm:px-4 animate-fade-in"
+      className="animate-fade-in fixed inset-0 z-80 flex items-start justify-center bg-black/50 px-3 pt-12 backdrop-blur-sm sm:px-4 sm:pt-20"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-stone-200 flex flex-col max-h-[85vh]"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search products"
         onClick={(e) => e.stopPropagation()}
+        className="animate-pop flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl sm:rounded-3xl"
       >
-        {/* Search Header Input Area */}
-        <div className="p-3.5 sm:p-5 border-b border-stone-100 flex items-center gap-2.5 sm:gap-3 bg-white sticky top-0 z-10">
+        {/* Input */}
+        <div className="sticky top-0 z-10 flex items-center gap-2.5 border-b border-stone-100 bg-white p-3.5 sm:gap-3 sm:p-5">
           <svg
-            className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-stone-400 shrink-0"
+            className="h-5 w-5 shrink-0 text-stone-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
             strokeWidth="2"
+            aria-hidden
           >
             <path
               strokeLinecap="round"
@@ -81,116 +162,184 @@ export default function SearchModal({
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search dresses, collection, categories..."
-            className="w-full text-stone-900 placeholder:text-stone-400 text-xs sm:text-base outline-none bg-transparent font-medium"
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActive(0);
+            }}
+            onKeyDown={onInputKey}
+            placeholder="Search dresses, colours, categories..."
+            className="w-full bg-transparent text-sm font-medium text-stone-900 outline-none placeholder:text-stone-400 sm:text-base"
           />
           {query && (
             <button
-              onClick={() => setQuery("")}
-              className="text-[10px] sm:text-xs text-stone-500 hover:text-stone-900 uppercase tracking-wider font-semibold bg-stone-100 hover:bg-stone-200 px-2.5 py-1 rounded-md transition-colors shrink-0 cursor-pointer"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+              className="shrink-0 cursor-pointer rounded-md bg-stone-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-900 sm:text-xs"
             >
               Clear
             </button>
           )}
           <button
             onClick={onClose}
-            aria-label="Close modal"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-800 hover:bg-stone-100 text-lg transition-colors shrink-0 cursor-pointer"
+            aria-label="Close search"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-lg text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-800"
           >
             ×
           </button>
         </div>
 
-        {/* Results Container */}
-        <div className="overflow-y-auto p-3 sm:p-5 space-y-2.5 flex-1">
-          {query.trim() === "" ? (
-            <div className="text-center py-10 sm:py-14 text-stone-400 text-[11px] sm:text-xs uppercase tracking-widest font-medium px-4">
-              Start typing to search Little Meadow collection...
+        {/* Results */}
+        <div ref={listRef} className="flex-1 overflow-y-auto p-3 sm:p-5">
+          {tokens.length === 0 ? (
+            <div className="px-2 py-8 text-center sm:py-10">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-stone-400">
+                Popular searches
+              </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => {
+                      setQuery(c);
+                      setActive(0);
+                      inputRef.current?.focus();
+                    }}
+                    className="cursor-pointer rounded-full border border-stone-200 bg-[#faf8f5] px-4 py-2 text-xs font-semibold capitalize text-stone-700 transition-all hover:border-stone-900 hover:bg-stone-900 hover:text-white"
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-10 sm:py-14 text-stone-500 text-xs sm:text-sm px-4">
+          ) : results.length === 0 ? (
+            <div className="px-4 py-10 text-center text-xs text-stone-500 sm:py-14 sm:text-sm">
               No matching pieces found for{" "}
               <span className="font-semibold text-stone-800">
                 &ldquo;{query}&rdquo;
               </span>
               .
+              <p className="mt-2 text-[11px] text-stone-400">
+                Try a shorter word or a category like frocks.
+              </p>
             </div>
           ) : (
-            <div className="divide-y divide-stone-100">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  onClick={() => {
-                    onSelectProduct(product);
-                    onClose();
-                  }}
-                  className="py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-stone-50 px-2.5 sm:px-3 rounded-xl transition-colors cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200">
-                      {product.image ? (
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          sizes="56px"
-                          className="object-cover group-hover:scale-105 transition-transform"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[10px] text-stone-400">
-                          Img
+            <>
+              <p className="px-1 pb-2 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                {results.length} {results.length === 1 ? "result" : "results"}
+              </p>
+              <div className="divide-y divide-stone-100" role="listbox">
+                {results.map((p, i) => {
+                  const soldOut =
+                    (p.stock !== null && p.stock <= 0) ||
+                    p.availableSizes.length === 0;
+                  const on = i === active;
+                  return (
+                    <div
+                      key={p.id}
+                      role="option"
+                      aria-selected={on}
+                      data-active={on}
+                      onMouseEnter={() => setActive(i)}
+                      onClick={() => choose(p)}
+                      className={`group flex cursor-pointer items-center justify-between gap-3 rounded-xl px-2.5 py-2.5 transition-colors sm:px-3 sm:py-3 ${
+                        on ? "bg-[#faf8f5]" : ""
+                      }`}
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-stone-200 bg-stone-100 sm:h-14 sm:w-14">
+                          {p.image ? (
+                            <Image
+                              src={p.image}
+                              alt={p.name}
+                              fill
+                              sizes="56px"
+                              className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
+                                soldOut ? "opacity-60 grayscale-20" : ""
+                              }`}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-[10px] text-stone-400">
+                              Img
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="font-semibold text-stone-900 text-xs sm:text-sm group-hover:text-stone-700 transition-colors truncate">
-                        {product.name}
-                      </h4>
-                      <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-medium text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full inline-block mt-1">
-                        {product.category}
-                      </span>
-                    </div>
-                  </div>
+                        <div className="min-w-0">
+                          <h4 className="truncate text-xs font-semibold text-stone-900 sm:text-sm">
+                            <Highlight text={p.name} tokens={tokens} />
+                          </h4>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <span className="inline-block rounded-full bg-stone-100 px-2 py-0.5 text-[9px] font-medium uppercase tracking-widest text-stone-500 sm:text-[10px]">
+                              {p.category}
+                            </span>
+                            {soldOut && (
+                              <span className="inline-block rounded-full bg-stone-900 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                                Sold out
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="text-right flex items-center gap-2.5 sm:gap-3 shrink-0">
-                    <div>
-                      <span className="text-xs sm:text-sm font-bold text-stone-900 block">
-                        {formatMoney(product.price)}
-                      </span>
-                      <span className="hidden sm:inline-block text-[11px] font-semibold text-stone-500 group-hover:text-stone-900 mt-0.5">
-                        View details
-                      </span>
+                      <div className="flex shrink-0 items-center gap-2.5 text-right sm:gap-3">
+                        <span className="block text-xs font-bold text-stone-900 sm:text-sm">
+                          {formatMoney(p.price)}
+                        </span>
+                        <div
+                          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all sm:h-8 sm:w-8 ${
+                            on
+                              ? "bg-stone-900 text-white"
+                              : "bg-stone-100 text-stone-600"
+                          }`}
+                        >
+                          <svg
+                            className="h-3.5 w-3.5 sm:h-4 sm:w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                            aria-hidden
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-100 group-hover:bg-stone-900 group-hover:text-white text-stone-600 flex items-center justify-center transition-all">
-                      <svg
-                        className="w-3.5 h-3.5 sm:w-4 sm:h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
-        {/* Footer tip */}
-        <div className="bg-stone-50 px-4 sm:px-6 py-2.5 sm:py-3 border-t border-stone-100 text-center text-[10px] sm:text-[11px] text-stone-500">
-          Tip: Press{" "}
-          <kbd className="bg-white border border-stone-300 px-1.5 py-0.5 rounded shadow-2xs font-mono">
-            ESC
-          </kbd>{" "}
-          to close search.
+        <div className="hidden items-center justify-center gap-4 border-t border-stone-100 bg-stone-50 px-6 py-3 text-[11px] text-stone-500 sm:flex">
+          <span>
+            <kbd className="rounded border border-stone-300 bg-white px-1.5 py-0.5 font-mono shadow-2xs">
+              ↑
+            </kbd>{" "}
+            <kbd className="rounded border border-stone-300 bg-white px-1.5 py-0.5 font-mono shadow-2xs">
+              ↓
+            </kbd>{" "}
+            navigate
+          </span>
+          <span>
+            <kbd className="rounded border border-stone-300 bg-white px-1.5 py-0.5 font-mono shadow-2xs">
+              Enter
+            </kbd>{" "}
+            open
+          </span>
+          <span>
+            <kbd className="rounded border border-stone-300 bg-white px-1.5 py-0.5 font-mono shadow-2xs">
+              Esc
+            </kbd>{" "}
+            close
+          </span>
         </div>
       </div>
     </div>

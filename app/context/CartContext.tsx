@@ -256,8 +256,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       />
 
       {orderSuccess && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white max-w-sm w-full rounded-2xl p-6 sm:p-8 text-center shadow-2xl">
+        <div className="animate-fade-in fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="animate-pop bg-white max-w-sm w-full rounded-2xl p-6 sm:p-8 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-8 w-8 text-emerald-600"
+                aria-hidden
+              >
+                <path className="check-draw" d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+            </div>
             <h2 className="text-2xl sm:text-3xl font-serif italic text-stone-900 mb-2">
               Thank you for your order
             </h2>
@@ -269,10 +283,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               shortly on WhatsApp to confirm it.
             </p>
             <button
-              onClick={() => {
-                setOrderSuccess(null);
-                router.push("/#shop");
-              }}
+              onClick={() => setOrderSuccess(null)}
               className="w-full bg-stone-900 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors cursor-pointer"
             >
               Continue Shopping

@@ -29,7 +29,10 @@ function Tile({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ProductDetail({ product }: ProductDetailProps) {
+export default function ProductDetail({
+  product,
+  allProducts,
+}: ProductDetailProps) {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [size, setSize] = useState<string>(
     product.availableSizes[0] ?? product.sizes[0]
@@ -326,7 +329,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        products={[product]}
+        products={allProducts && allProducts.length ? allProducts : [product]}
         formatMoney={formatMoney}
         onSelectProduct={(selectedProduct) => {
           router.push(`/product/${selectedProduct.id}`);

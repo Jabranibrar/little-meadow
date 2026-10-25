@@ -13,6 +13,11 @@ async function getProduct(id: string) {
   return data ? mapProduct(data as SupabaseProductRow) : null;
 }
 
+async function getAllProducts() {
+  const { data } = await supabase.from("products").select("*");
+  return (data ?? []).map((r) => mapProduct(r as SupabaseProductRow));
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -36,7 +41,10 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const [product, allProducts] = await Promise.all([
+    getProduct(id),
+    getAllProducts(),
+  ]);
   if (!product) notFound();
-  return <ProductDetail product={product} />;
+  return <ProductDetail product={product} allProducts={allProducts} />;
 }
