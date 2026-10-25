@@ -10,6 +10,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ImageSlider from "./ImageSlider";
 import SearchModal from "./SearchModal";
+import ProductReviews from "./ProductReviews";
 import { getGallery, colorImageIndex } from "../lib/products";
 
 interface ProductDetailProps {
@@ -278,7 +279,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             )}
           </section>
         )}
-
+        <ProductReviews productId={product.id} />
         {/* Delivery and exchange */}
         <section className="mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-3">
           <div className="rounded-xl border border-stone-200 bg-white/80 p-5">
