@@ -169,7 +169,7 @@ export default function QuickView({
             </div>
           </div>
 
-          <div className="space-y-3 sm:mt-0 sm:pt-6">
+          <div className="space-y-3 mt-5 sm:mt-0 sm:pt-6">
             <button
               type="button"
               disabled={unavailable}
