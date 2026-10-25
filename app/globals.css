@@ -92,3 +92,115 @@ h3,
     transform: none;
   }
 }
+
+/* welcome intro */
+@keyframes splashOut {
+  0%,
+  82% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes splashLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.55) rotate(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+@keyframes lineGrow {
+  from {
+    width: 0;
+  }
+  to {
+    width: 3rem;
+  }
+}
+
+.splash {
+  animation: splashOut 2.7s ease forwards;
+}
+.splash-logo {
+  animation: splashLogo 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.splash-ring {
+  animation: ringPulse 1.8s ease-out 0.5s infinite;
+}
+.splash-ring-2 {
+  animation-delay: 1.1s;
+}
+.splash-rise {
+  opacity: 0;
+  animation: riseIn 0.7s ease forwards;
+  animation-delay: var(--d, 0.6s);
+}
+.splash-line {
+  width: 0;
+  animation: lineGrow 0.8s ease 0.9s forwards;
+}
+
+/* falling petals */
+@keyframes petalFall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(calc(var(--sx, 40) * 1px), 50vh, 0) rotate(180deg);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(calc(var(--sx, 40) * -0.6px), 112vh, 0)
+      rotate(360deg);
+    opacity: 0;
+  }
+}
+.petal {
+  position: absolute;
+  top: 0;
+  animation: petalFall linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash,
+  .petal {
+    display: none;
+  }
+}

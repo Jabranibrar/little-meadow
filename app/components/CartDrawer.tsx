@@ -154,12 +154,32 @@ export default function CartDrawer({
               <span>Total</span>
               <span>{formatMoney(totalAmount + deliveryFee)}</span>
             </div>
-            {deliveryFee > 0 && (
-              <p className="text-[11px] text-stone-500 mb-4">
-                Add {formatMoney(FREE_DELIVERY_ABOVE - totalAmount)} more for
-                free delivery.
+            <div className="mb-4">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+                <div
+                  className="h-full rounded-full bg-linear-to-r from-pink-300 to-pink-400 transition-all duration-700 ease-out"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (totalAmount / FREE_DELIVERY_ABOVE) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[11px] text-stone-500">
+                {deliveryFee > 0 ? (
+                  <>
+                    Add{" "}
+                    <strong className="text-stone-800">
+                      {formatMoney(FREE_DELIVERY_ABOVE - totalAmount)}
+                    </strong>{" "}
+                    more for free delivery.
+                  </>
+                ) : (
+                  "You have unlocked free delivery."
+                )}
               </p>
-            )}
+            </div>
             <button
               onClick={onProceedCheckout}
               className="w-full bg-stone-900 text-white py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-stone-800 transition-colors cursor-pointer"

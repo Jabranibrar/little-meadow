@@ -4,6 +4,8 @@ import { CartProvider } from "./context/CartContext";
 import Analytics from "./components/Analytics";
 // import WhatsAppButton from "./components/WhatsAppButton";
 import ScrollToTop from "./components/ScrollToTop";
+import Splash from "./components/Splash";
+import FloatingPetals from "./components/FloatingPetals";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -47,12 +49,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${nunito.variable}`}>
       <body>
+        <Splash />
         <div
           aria-hidden
           className="fixed inset-0 -z-10 bg-cover bg-center"
           style={{ backgroundImage: "url('/little-meadow.jpeg')" }}
         />
         <div aria-hidden className="fixed inset-0 -z-10 bg-[#faf8f5]/70" />
+        <FloatingPetals />
+
         <Analytics />
         <CartProvider>{children}</CartProvider>
         {/* <WhatsAppButton /> */}

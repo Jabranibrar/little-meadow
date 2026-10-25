@@ -50,7 +50,7 @@ export default function PolicyLayout({
 }) {
   return (
     <div className="min-h-screen">
-      <header className="h-16 md:h-20 flex items-center justify-between px-[5%] sm:px-[6%] sticky top-0 z-40 border-b border-stone-200 backdrop-blur-md bg-white/70">
+      <header className="h-16 md:h-20 flex items-center justify-between px-[5%] sm:px-[6%] sticky top-0 z-40 border-b border-stone-200 backdrop-blur-md">
         <Link
           href="/"
           className="group flex items-center gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-stone-700 hover:text-stone-900 transition-colors"
