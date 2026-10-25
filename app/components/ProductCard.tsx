@@ -150,7 +150,7 @@ export default function ProductCard({
       </div>
 
       {/* Add To Bag Action Button */}
-      <div className="p-2.5 sm:p-5 pt-0">
+      <div className="p-2.5 sm:p-5 pt-0 sm:pt-0">
         <button
           onClick={() => onAddToCart(product, selectedSize, 1, colorName)}
           disabled={unavailable}
