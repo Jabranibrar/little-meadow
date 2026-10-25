@@ -68,7 +68,7 @@ export default function ProductCard({
           </div>
 
           <Link href={href}>
-            <h4 className="font-serif text-xs sm:text-lg text-stone-900 mb-1 hover:underline underline-offset-4 line-clamp-1">
+            <h4 className="text-xs sm:text-lg text-stone-900 mb-1 hover:underline underline-offset-4 line-clamp-1">
               {product.name}
             </h4>
           </Link>
@@ -119,7 +119,7 @@ export default function ProductCard({
           {/* Size Selector */}
           <div className="mb-1 sm:mb-2">
             <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 mb-1 sm:mb-1.5 tracking-wider">
-              Select Size:
+              Size:
             </div>
             <div className="flex flex-wrap gap-1 sm:gap-1.5">
               {product.sizes.map((sz) => {

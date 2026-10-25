@@ -173,9 +173,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             )}
 
             {/* Sizes */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <div className="text-[11px] uppercase font-bold text-stone-500 mb-2 tracking-wider">
-                Select Size
+                Size
               </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((sz) => {
@@ -201,7 +201,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   );
                 })}
               </div>
-            </div>
+            </div> */}
 
             <button
               onClick={() => addToCart(product, size, 1, colorName)}

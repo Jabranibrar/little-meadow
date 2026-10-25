@@ -17,62 +17,45 @@ export default function DeliveryPage() {
   return (
     <PolicyLayout
       title="Delivery Information"
-      intro="We want every little outfit to reach you safely and on time. Here is everything you need to know about how we deliver."
+      intro="How and when your little one's outfit reaches you."
     >
       <PolicySection num="01" title="Delivery Time">
         <p>
-          Orders are prepared within <strong>{PROCESSING_DAYS}</strong> of
-          confirmation. Delivery then usually takes{" "}
-          <strong>{DELIVERY_DAYS}</strong> across Pakistan. Remote areas may
-          take a little longer.
+          After you confirm your order, we prepare it within{" "}
+          <strong>{PROCESSING_DAYS}</strong>. It then reaches you in{" "}
+          <strong>{DELIVERY_DAYS}</strong>. Remote areas may take a little
+          longer.
         </p>
       </PolicySection>
 
       <PolicySection num="02" title="Delivery Charges">
         <PolicyList
           items={[
-            `A flat delivery charge of Rs. ${DELIVERY_FEE.toLocaleString(
+            `Rs. ${DELIVERY_FEE.toLocaleString(
               "en-PK"
-            )} applies to orders below Rs. ${FREE_DELIVERY_ABOVE.toLocaleString(
+            )} for orders below Rs. ${FREE_DELIVERY_ABOVE.toLocaleString(
               "en-PK"
             )}.`,
-            `Delivery is free on orders of Rs. ${FREE_DELIVERY_ABOVE.toLocaleString(
+            `Free delivery on Rs. ${FREE_DELIVERY_ABOVE.toLocaleString(
               "en-PK"
             )} and above.`,
-            "The exact delivery charge is shown in your bag before you place the order.",
+            "Pay the total in cash to the courier when your parcel arrives.",
           ]}
         />
       </PolicySection>
 
-      <PolicySection num="03" title="Cash on Delivery">
+      <PolicySection num="03" title="Receiving Your Parcel">
         <p>
-          Payment is currently Cash on Delivery. Please keep the exact amount
-          ready when the courier arrives.
+          Please check your parcel when it arrives. If it looks damaged or
+          opened, take photos or a video before opening it and message us
+          straight away.
         </p>
       </PolicySection>
 
-      <PolicySection num="04" title="Order Confirmation">
-        <p>
-          After you place an order, we will message you on WhatsApp with your
-          order details. Please reply <strong>CONFIRM</strong> so we can
-          dispatch your parcel. Please make sure your mobile number and address
-          are correct.
-        </p>
-      </PolicySection>
-
-      <PolicySection num="05" title="Receiving Your Parcel">
-        <p>
-          Please inspect your parcel when possible. If it looks badly damaged or
-          tampered with, take photos or a video before opening it and contact us
-          immediately. Delays caused by the courier company are outside our
-          direct control, but we will always help you resolve them.
-        </p>
-      </PolicySection>
-
-      <PolicySection num="06" title="Need Help?">
+      <PolicySection num="04" title="Need Help?">
         <p>
           Message us on WhatsApp at <strong>{CONTACT_WHATSAPP}</strong> with
-          your order number and we will be happy to help.
+          your order number.
         </p>
       </PolicySection>
     </PolicyLayout>

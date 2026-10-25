@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 export function PolicySection({
@@ -72,9 +73,24 @@ export default function PolicyLayout({
           <span className="hidden sm:inline">Back to Store</span>
           <span className="sm:hidden">Back</span>
         </Link>
-        <span className="font-serif text-lg sm:text-xl md:text-2xl text-stone-900">
-          Little Meadow
-        </span>
+        <Link
+          href="/"
+          aria-label="Little Meadow home"
+          className="flex items-center gap-2.5"
+        >
+          <span className="relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-full border border-stone-200">
+            <Image
+              src="/little-meadow.jpeg"
+              alt="Little Meadow logo"
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </span>
+          <span className="font-serif italic text-lg sm:text-xl md:text-2xl leading-none text-stone-900">
+            Little Meadow
+          </span>
+        </Link>
       </header>
 
       <main className="px-[4%] sm:px-[6%] py-8 sm:py-12 md:py-20">

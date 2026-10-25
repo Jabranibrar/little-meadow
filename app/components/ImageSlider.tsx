@@ -75,7 +75,7 @@ export default function ImageSlider({
               sizes={sizes}
               priority={priority && i === 0}
               draggable={false}
-              className="object-contain p-2 object-center"
+              className="object-cover sm:object-contain p-2 object-center"
             />
           );
           return (
