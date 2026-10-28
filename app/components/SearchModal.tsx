@@ -142,7 +142,6 @@ export default function SearchModal({
         onClick={(e) => e.stopPropagation()}
         className="animate-pop flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl sm:rounded-3xl"
       >
-        {/* Input */}
         <div className="sticky top-0 z-10 flex items-center gap-2.5 border-b border-stone-100 bg-white p-3.5 sm:gap-3 sm:p-5">
           <svg
             className="h-5 w-5 shrink-0 text-stone-400"
@@ -190,7 +189,6 @@ export default function SearchModal({
           </button>
         </div>
 
-        {/* Results */}
         <div ref={listRef} className="flex-1 overflow-y-auto p-3 sm:p-5">
           {tokens.length === 0 ? (
             <div className="px-2 py-8 text-center sm:py-10">

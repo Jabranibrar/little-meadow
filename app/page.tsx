@@ -232,7 +232,6 @@ export default function Home() {
           <p className="text-center text-stone-400 py-12">No products found.</p>
         ) : (
           <>
-            {/* Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {visibleProducts.map((product, i) => (
                 <Reveal
@@ -269,7 +268,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Counter Info */}
             <p className="text-center text-xs text-stone-400 mt-4">
               Showing {visibleProducts.length} of {sortedProducts.length}{" "}
               products

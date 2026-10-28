@@ -396,7 +396,6 @@ export default function ProductReviews({ productId }: { productId: number }) {
         </div>
       ) : (
         <>
-          {/* Summary */}
           {stats.count > 0 ? (
             <div className="grid gap-6 md:grid-cols-[230px_1fr] md:gap-10 items-center rounded-xl border border-stone-200 bg-[#faf8f5] p-5 sm:p-6">
               <div className="text-center">
@@ -466,14 +465,12 @@ export default function ProductReviews({ productId }: { productId: number }) {
             </p>
           )}
 
-          {/* Notice */}
           {notice && (
             <p className="mx-auto mt-5 max-w-xl rounded-lg bg-emerald-50 px-4 py-2.5 text-center text-sm font-medium text-emerald-700">
               {notice}
             </p>
           )}
 
-          {/* Quick rate */}
           {!formOpen && (
             <div className="mt-6 flex flex-col items-center gap-3">
               <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
@@ -508,7 +505,6 @@ export default function ProductReviews({ productId }: { productId: number }) {
             </div>
           )}
 
-          {/* Form */}
           {formOpen && (
             <form
               ref={formRef}
@@ -588,7 +584,6 @@ export default function ProductReviews({ productId }: { productId: number }) {
                 </p>
               </div>
 
-              {/* bot trap */}
               <input
                 type="text"
                 tabIndex={-1}
@@ -650,7 +645,6 @@ export default function ProductReviews({ productId }: { productId: number }) {
             </form>
           )}
 
-          {/* Sort */}
           {reviews.length > 1 && (
             <div className="mt-8 flex items-center justify-between gap-3 border-b border-stone-200 pb-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
@@ -661,7 +655,6 @@ export default function ProductReviews({ productId }: { productId: number }) {
             </div>
           )}
 
-          {/* List */}
           {list.length > 0 && (
             <ul className="divide-y divide-stone-200">
               {list.slice(0, visible).map((r) => {

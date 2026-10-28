@@ -29,7 +29,6 @@ h3,
   font-family: var(--font-cormorant), serif;
 }
 
-/* scroll reveal */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -93,7 +92,6 @@ h3,
   }
 }
 
-/* welcome intro */
 @keyframes splashOut {
   0%,
   82% {
@@ -170,7 +168,6 @@ h3,
   animation: lineGrow 0.8s ease 0.9s forwards;
 }
 
-/* falling petals */
 @keyframes petalFall {
   0% {
     transform: translate3d(0, -12vh, 0) rotate(0deg);

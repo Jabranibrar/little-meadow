@@ -118,12 +118,11 @@ export default function ImageLightbox({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex flex-col bg-stone-950/95 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex flex-col bg-stone-950/95 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label={`${alt} zoom`}
     >
-      {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3">
         <div className="text-xs font-semibold tracking-[0.2em] text-white/80">
           {index + 1} / {images.length}
@@ -188,7 +187,6 @@ export default function ImageLightbox({
         </div>
       </div>
 
-      {/* Image area */}
       <div
         ref={boxRef}
         className="relative flex-1 overflow-hidden touch-none select-none"
@@ -229,7 +227,6 @@ export default function ImageLightbox({
         )}
       </div>
 
-      {/* Thumbnails */}
       {images.length > 1 && (
         <div className="flex justify-center gap-2 overflow-x-auto px-4 py-3">
           {images.map((src, i) => (

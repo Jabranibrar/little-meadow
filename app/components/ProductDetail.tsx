@@ -91,7 +91,6 @@ export default function ProductDetail({
         </Link>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-14 items-start">
-          {/* Gallery */}
           <div className="md:sticky md:top-28 relative">
             <div className={unavailable ? "opacity-60 grayscale-20" : ""}>
               <ImageSlider
@@ -111,7 +110,6 @@ export default function ProductDetail({
             )}
           </div>
 
-          {/* Info */}
           <div className="bg-white/80 backdrop-blur-xs rounded-2xl border border-stone-200 shadow-2xs p-5 sm:p-8">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 bg-pink-100/70 text-stone-700 rounded-md">
@@ -144,7 +142,6 @@ export default function ProductDetail({
               </p>
             )}
 
-            {/* Colours */}
             {product.colors.length > 0 && (
               <div className="mt-6">
                 <div className="text-[11px] uppercase font-bold text-stone-500 mb-2 tracking-wider">
@@ -176,37 +173,6 @@ export default function ProductDetail({
               </div>
             )}
 
-            {/* Sizes */}
-            {/* <div className="mt-6">
-              <div className="text-[11px] uppercase font-bold text-stone-500 mb-2 tracking-wider">
-                Size
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((sz) => {
-                  const available =
-                    !soldOut && product.availableSizes.includes(sz);
-                  return (
-                    <button
-                      key={sz}
-                      type="button"
-                      disabled={!available}
-                      title={available ? undefined : "Not available"}
-                      onClick={() => setSize(sz)}
-                      className={`min-w-16 flex-1 px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-lg border transition-all ${
-                        !available
-                          ? "cursor-not-allowed border-stone-200 bg-stone-50 text-stone-300 line-through"
-                          : size === sz
-                          ? "cursor-pointer bg-stone-900 text-white border-stone-900 shadow-2xs"
-                          : "cursor-pointer bg-white text-stone-700 border-stone-200 hover:border-stone-400"
-                      }`}
-                    >
-                      {sz}
-                    </button>
-                  );
-                })}
-              </div>
-            </div> */}
-
             <button
               onClick={() => addToCart(product, size, 1, colorName)}
               disabled={unavailable}
@@ -228,7 +194,6 @@ export default function ProductDetail({
           </div>
         </div>
 
-        {/* Product details */}
         {(tiles.length > 0 || product.highlights.length > 0) && (
           <section className="mt-10 sm:mt-14 rounded-2xl border border-stone-200 bg-white/80 backdrop-blur-xs shadow-2xs p-5 sm:p-8 md:p-10">
             <div className="text-center mb-6 sm:mb-8">
@@ -283,7 +248,6 @@ export default function ProductDetail({
           </section>
         )}
         <ProductReviews productId={product.id} />
-        {/* Delivery and exchange */}
         <section className="mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-3">
           <div className="rounded-xl border border-stone-200 bg-white/80 p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">

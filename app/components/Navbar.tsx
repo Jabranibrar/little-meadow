@@ -62,7 +62,6 @@ export default function Navbar({
 
   return (
     <header className="h-16 md:h-20 flex items-center justify-between px-[5%] md:px-[6%] sticky top-0 z-50 border-b border-stone-200 backdrop-blur-md">
-      {/* Brand Logo */}
       <Link
         href="/"
         onClick={() => {
@@ -91,7 +90,6 @@ export default function Navbar({
         </div>
       </Link>
 
-      {/* Desktop Navigation */}
       <nav className="hidden lg:flex items-center gap-7 xl:gap-9 text-xs font-semibold uppercase tracking-[0.18em] text-stone-600">
         <button
           onClick={() => handleNavClick("#shop", "all")}
@@ -100,7 +98,6 @@ export default function Navbar({
           Collection
         </button>
 
-        {/* Desktop Boy Dropdown */}
         <div className="relative group inline-flex items-center py-2 cursor-pointer">
           <div className={`${linkClass} inline-flex items-center gap-1.5`}>
             <span>Boy</span>
@@ -144,7 +141,6 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Desktop Girl Dropdown */}
         <div className="relative group inline-flex items-center py-2 cursor-pointer">
           <div className={`${linkClass} inline-flex items-center gap-1.5`}>
             <span>Girl</span>
@@ -219,7 +215,6 @@ export default function Navbar({
         </button>
       </nav>
 
-      {/* Action Buttons */}
       <div className="flex items-center gap-2.5 md:gap-3">
         <button
           onClick={onOpenSearch}
@@ -296,7 +291,6 @@ export default function Navbar({
         </button>
       </div>
 
-      {/* Mobile Drawer Menu */}
       {menuOpen && (
         <>
           <div
@@ -311,7 +305,6 @@ export default function Navbar({
               Collection
             </button>
 
-            {/* Mobile Boy Accordion Section */}
             <div className="border-b border-stone-100">
               <div
                 onClick={() => setMobileBoyOpen(!mobileBoyOpen)}
@@ -355,7 +348,6 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Mobile Girl Accordion Section */}
             <div className="border-b border-stone-100">
               <div
                 onClick={() => setMobileGirlOpen(!mobileGirlOpen)}

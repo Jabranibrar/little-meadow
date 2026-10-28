@@ -73,12 +73,6 @@ export default function Footer() {
           </Link>
         </div>
         <div className="flex flex-col items-center gap-2 text-xs text-stone-500 text-center">
-          {/* <a
-            href="mailto:hello@littlemeadow.pk"
-            className="hover:text-stone-900 transition-colors"
-          >
-            hello@littlemeadow.pk
-          </a> */}
           <p className="text-stone-400">
             © 2026 Little Meadow. All rights reserved.
           </p>

@@ -39,7 +39,6 @@ export default function ProductCard({
   return (
     <div className="group h-full border border-stone-200/80 rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
       <div>
-        {/* Product Image Section */}
         <div className="relative border-b border-stone-100 overflow-hidden">
           <div className={unavailable ? "opacity-50 grayscale-20" : ""}>
             <ImageSlider
@@ -52,7 +51,6 @@ export default function ProductCard({
             />
           </div>
 
-          {/* Quick view button */}
           <button
             type="button"
             onClick={() => setQuickOpen(true)}
@@ -81,7 +79,6 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* Product Details Section */}
         <div className="p-2.5 sm:p-5">
           <div className="flex items-center justify-between gap-1 mb-1.5 sm:mb-2">
             <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-stone-100 text-stone-600 rounded-md truncate max-w-[55%]">
@@ -102,46 +99,6 @@ export default function ProductCard({
             {product.desc}
           </p>
 
-          {/* Commented Colors Block Retained As Requested */}
-          {/* {product.colors.length > 0 && (
-            <div className="mb-3.5">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                  Colour
-                </span>
-                <span className="truncate text-[11px] font-semibold text-stone-700">
-                  {colorName}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-2.5">
-                {product.colors.map((c) => {
-                  const selected = colorName === c.name;
-                  return (
-                    <button
-                      key={c.name}
-                      type="button"
-                      title={c.name}
-                      aria-label={`Colour ${c.name}`}
-                      aria-pressed={selected}
-                      onClick={() => setColorName(c.name)}
-                      className={`h-7 w-7 rounded-full p-0.5 transition-all duration-200 cursor-pointer ${
-                        selected
-                          ? "ring-2 ring-stone-900 ring-offset-2"
-                          : "ring-1 ring-stone-300 hover:scale-110 hover:ring-stone-500"
-                      }`}
-                    >
-                      <span
-                        className="block h-full w-full rounded-full border border-white shadow-inner"
-                        style={{ backgroundColor: c.hex }}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )} */}
-
-          {/* Size Selector */}
           <div className="mb-1 sm:mb-2">
             <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 mb-1 sm:mb-1.5 tracking-wider">
               Size:
@@ -174,7 +131,6 @@ export default function ProductCard({
         </div>
       </div>
 
-      {/* Add To Bag Action Button */}
       <div className="p-2.5 sm:p-5 pt-0 sm:pt-0">
         <button
           onClick={() => onAddToCart(product, selectedSize, 1, colorName)}
@@ -185,7 +141,6 @@ export default function ProductCard({
         </button>
       </div>
 
-      {/* Quick view dialog */}
       {quickOpen && (
         <QuickView
           product={product}
