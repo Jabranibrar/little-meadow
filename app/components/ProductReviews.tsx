@@ -46,12 +46,20 @@ function saveToken(id: number, token: string) {
   } catch {}
 }
 
-const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-GB", {
+const fmtDate = (iso: string) => {
+  const d = new Date(iso);
+  const dateStr = d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
+  const timeStr = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  return `${dateStr}, ${timeStr}`;
+};
 
 function SortMenu({
   value,
@@ -677,10 +685,14 @@ export default function ProductReviews({ productId }: { productId: number }) {
                             </span>
                           )}
                         </p>
-                        <p className="text-[11px] text-stone-400">
-                          {fmtDate(r.created_at)}
-                          {r.edited_at ? " · Edited" : ""}
-                        </p>
+                        <div className="text-[11px] text-stone-400 bg-stone-50 border border-stone-200/60 px-2.5 py-1 rounded-md tracking-wide font-medium flex items-center gap-1.5">
+                          <span>{fmtDate(r.created_at)}</span>
+                          {r.edited_at && (
+                            <span className="text-[10px] text-stone-400 italic">
+                              · Edited
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <Stars value={r.rating} />
@@ -689,7 +701,7 @@ export default function ProductReviews({ productId }: { productId: number }) {
                         </span>
                       </div>
                       {r.comment && (
-                        <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-stone-700">
+                        <p className="mt-2 whitespace-pre-line wrap-break-word text-sm leading-relaxed text-stone-700">
                           {r.comment}
                         </p>
                       )}
