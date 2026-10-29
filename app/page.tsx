@@ -28,6 +28,9 @@ type FilterType =
 export default function Home() {
   const { totalCount, openCart, addToCart, formatMoney } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
+  const [ratings, setRatings] = useState<
+    Record<string, { average: number; count: number }>
+  >({});
   const [loading, setLoading] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
@@ -137,6 +140,15 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    fetch("/api/ratings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ratings) setRatings(d.ratings);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
       <Navbar
@@ -243,6 +255,7 @@ export default function Home() {
                     product={product}
                     onAddToCart={addToCart}
                     formatMoney={formatMoney}
+                    rating={ratings[product.id]}
                   />
                 </Reveal>
               ))}

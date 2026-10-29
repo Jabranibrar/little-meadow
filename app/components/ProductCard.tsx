@@ -16,12 +16,14 @@ interface ProductCardProps {
     color?: string
   ) => void;
   formatMoney: (amount: number) => string;
+  rating?: { average: number; count: number };
 }
 
 export default function ProductCard({
   product,
   onAddToCart,
   formatMoney,
+  rating,
 }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState<string>(
     product.availableSizes[0] ?? product.sizes[0]
@@ -35,6 +37,9 @@ export default function ProductCard({
   const href = `/product/${product.id}`;
   const soldOut = product.stock !== null && product.stock <= 0;
   const unavailable = soldOut || product.availableSizes.length === 0;
+
+  const hasRating = !!rating && rating.count > 0;
+  const loved = hasRating && rating!.average >= 4.5 && rating!.count >= 3;
 
   return (
     <div className="group h-full border border-stone-200/80 rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
@@ -72,10 +77,40 @@ export default function ProductCard({
             </svg>
           </button>
 
-          {unavailable && (
+          {unavailable ? (
             <span className="pointer-events-none absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-stone-900/90 backdrop-blur-xs px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
               Sold Out
             </span>
+          ) : (
+            hasRating && (
+              <span
+                role="img"
+                aria-label={`Rated ${rating!.average.toFixed(
+                  1
+                )} out of 5 from ${rating!.count} ${
+                  rating!.count === 1 ? "review" : "reviews"
+                }`}
+                className={`pointer-events-none absolute left-2 top-2 sm:left-3 sm:top-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] sm:text-xs font-bold text-stone-800 shadow-sm backdrop-blur-sm ${
+                  loved
+                    ? "border-amber-200 bg-amber-50/95"
+                    : "border-white/70 bg-white/90"
+                }`}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-500"
+                  aria-hidden
+                >
+                  <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" />
+                </svg>
+                {rating!.average.toFixed(1)}
+                <span className="h-3 w-px bg-stone-300" />
+                <span className="font-medium text-stone-500">
+                  {rating!.count}
+                </span>
+              </span>
+            )
           )}
         </div>
 
